@@ -1,0 +1,62 @@
+{
+  "name": "tniq-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for TNIQ by Ringer — telecom number management, porting, toll-free, messaging, and CNAM APIs",
+  "type": "module",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./lib": {
+      "import": "./dist/lib.js",
+      "types": "./dist/lib.d.ts"
+    }
+  },
+  "bin": {
+    "tniq-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "postinstall.js",
+    ".claude-plugin",
+    ".mcp.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "postinstall": "node postinstall.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "tniq",
+    "ringer",
+    "telecom",
+    "porting",
+    "soa",
+    "toll-free",
+    "10dlc",
+    "messaging",
+    "cnam",
+    "npac",
+    "lnp"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ringer/tniq-mcp.git"
+  },
+  "author": "Ringer",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

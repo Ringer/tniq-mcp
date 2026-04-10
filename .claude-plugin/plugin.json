@@ -1,0 +1,33 @@
+{
+  "name": "tniq",
+  "version": "1.0.0",
+  "description": "MCP server for TNIQ by Ringer — telecom number management, porting, toll-free, messaging, and CNAM APIs",
+  "author": {
+    "name": "Ringer",
+    "url": "https://ringer.tel"
+  },
+  "repository": "https://github.com/Ringer/tniq-mcp",
+  "homepage": "https://ringer.tel",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "tniq",
+    "ringer",
+    "telecom",
+    "porting",
+    "soa",
+    "toll-free",
+    "10dlc",
+    "messaging",
+    "cnam",
+    "npac",
+    "lnp"
+  ],
+  "mcpServers": "./.mcp.json",
+  "userConfig": {
+    "api_token": {
+      "description": "Your TNIQ API token (get one at https://ringer.tel).",
+      "sensitive": true
+    }
+  }
+}
