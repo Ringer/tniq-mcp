@@ -179,8 +179,11 @@ function detectMcpClients(): McpClient[] {
         console.log("\n  ChatGPT Desktop requires manual setup:");
         console.log("  1. Open ChatGPT Desktop → Settings → Developer Mode");
         console.log("  2. Add a new MCP server with:");
-        console.log(`     Command: npx`);
-        console.log(`     Args: -y tniq-mcp`);
+        const { command: serverCmd, args: serverArgs } = getServerCommand();
+        console.log(`     Command: ${serverCmd}`);
+        if (serverArgs.length > 0) {
+          console.log(`     Args: ${serverArgs.join(" ")}`);
+        }
         if (token) {
           console.log(`     Env: TNIQ_API_TOKEN=${token}`);
         }
@@ -206,7 +209,8 @@ function registerClaudeCode(token: string | null): boolean {
     if (token) {
       args.push("-e", `TNIQ_API_TOKEN=${token}`);
     }
-    args.push("--", "npx", "-y", "tniq-mcp");
+    const { command: serverCmd, args: serverArgs } = getServerCommand();
+    args.push("--", serverCmd, ...serverArgs);
     execFileSync("claude", args, { stdio: "ignore" });
     return true;
   } catch {
@@ -226,7 +230,8 @@ function registerCodex(token: string | null): boolean {
     if (token) {
       args.push("--env", `TNIQ_API_TOKEN=${token}`);
     }
-    args.push("--", "npx", "-y", "tniq-mcp");
+    const { command: serverCmd, args: serverArgs } = getServerCommand();
+    args.push("--", serverCmd, ...serverArgs);
     execFileSync("codex", args, { stdio: "ignore" });
     return true;
   } catch {
@@ -271,9 +276,10 @@ function registerCopilot(
     }
 
     const servers = settings[key] as Record<string, unknown>;
+    const { command, args: serverArgs } = getServerCommand();
     const entry: Record<string, unknown> = {
-      command: "npx",
-      args: ["-y", "tniq-mcp"],
+      command,
+      ...(serverArgs.length > 0 ? { args: serverArgs } : {}),
       icon: ICON_DARK_DATA_URI,
     };
     if (token) {
@@ -318,9 +324,10 @@ function registerJsonConfig(
     }
 
     const servers = config.mcpServers as Record<string, unknown>;
+    const { command, args: serverArgs } = getServerCommand();
     const entry: Record<string, unknown> = {
-      command: "npx",
-      args: ["-y", "tniq-mcp"],
+      command,
+      ...(serverArgs.length > 0 ? { args: serverArgs } : {}),
       icon: ICON_DARK_DATA_URI,
     };
     if (token) {
@@ -358,6 +365,13 @@ function commandExists(cmd: string): boolean {
   } catch {
     return false;
   }
+}
+
+function getServerCommand(): { command: string; args: string[] } {
+  if (commandExists("tniq-mcp")) {
+    return { command: "tniq-mcp", args: [] };
+  }
+  return { command: "npx", args: ["-y", "tniq-mcp"] };
 }
 
 function loadExistingToken(): string | null {
@@ -413,11 +427,12 @@ function printManualConfig(token: string | null): void {
     env["TNIQ_API_TOKEN"] = token;
   }
 
+  const { command, args: serverArgs } = getServerCommand();
   const config = {
     mcpServers: {
       tniq: {
-        command: "npx",
-        args: ["-y", "tniq-mcp"],
+        command,
+        ...(serverArgs.length > 0 ? { args: serverArgs } : {}),
         icon: ICON_DARK_DATA_URI,
         ...(token ? { env } : {}),
       },
