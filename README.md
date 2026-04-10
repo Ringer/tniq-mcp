@@ -6,14 +6,13 @@ MCP server for [TNIQ by Ringer](https://ringer.tel) — telecom number managemen
 
 ```bash
 npm install -g tniq-mcp
+tniq-mcp setup
 ```
 
-The setup wizard runs automatically and will:
+The setup wizard will:
 1. Collect your API key
 2. Detect installed MCP clients (Claude, Cursor, Copilot, Codex, ChatGPT)
 3. Register the server automatically
-
-You can re-run the wizard at any time with `tniq-mcp setup`.
 
 ## Manual Configuration
 
