@@ -572,11 +572,18 @@ export function registerTollfreeTools(
   // 27. tf_get_inventory_summary
   server.tool(
     "tf_get_inventory_summary",
-    "Use when you need a high-level summary of the account's toll-free inventory counts by status.",
-    {},
+    "Use when you need a high-level summary of toll-free inventory counts grouped by RespOrg and status for a given customer.",
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose toll-free inventory summary to retrieve"),
+    },
     READ_ONLY_ANNOTATIONS,
-    async () => {
-      const data = await client.get("/api/v1/tollfree/inventory/summary");
+    async ({ customerId }) => {
+      const data = await client.get("/api/v1/tollfree/inventory/summary", {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
