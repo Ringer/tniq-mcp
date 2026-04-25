@@ -65,7 +65,7 @@ If you prefer not to install globally, use npx:
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `TNIQ_API_TOKEN` | API bearer token | (from `~/.tniq/config.json`) |
-| `TNIQ_API_BASE_URL` | API base URL | `https://soa-api.ringer.tel` |
+| `TNIQ_API_URL` | API URL (`TNIQ_API_BASE_URL` is still accepted for older configs) | `https://tniq-api.ringer.tel/v1` |
 | `TNIQ_REQUEST_TIMEOUT_MS` | Request timeout | `30000` |
 
 ## License

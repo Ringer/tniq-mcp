@@ -2,11 +2,11 @@ import { createInterface } from "node:readline/promises";
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
 import { execSync, execFileSync } from "node:child_process";
 import { stdin, stdout } from "node:process";
-import { CONFIG_DIR, CONFIG_FILE } from "./config.js";
+import { CONFIG_DIR, CONFIG_FILE, DEFAULT_API_URL } from "./config.js";
 import { ICON_DARK_DATA_URI } from "./icons.js";
 
 const REGISTER_URL = "https://ringer.tel";
-const API_BASE_URL = "https://soa-api.ringer.tel";
+const API_BASE_URL = new URL(DEFAULT_API_URL).origin;
 
 export async function runSetup(): Promise<void> {
   const rl = createInterface({ input: stdin, output: stdout });
