@@ -23,8 +23,12 @@ export class TniqClient {
     return this.request(url, { method: "GET" });
   }
 
-  async post(path: string, body?: unknown): Promise<unknown> {
-    const url = this.buildUrl(path);
+  async post(
+    path: string,
+    body?: unknown,
+    params?: Record<string, string | number | boolean | undefined>
+  ): Promise<unknown> {
+    const url = this.buildUrl(path, params);
     return this.request(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -32,10 +36,27 @@ export class TniqClient {
     });
   }
 
-  async put(path: string, body?: unknown): Promise<unknown> {
-    const url = this.buildUrl(path);
+  async put(
+    path: string,
+    body?: unknown,
+    params?: Record<string, string | number | boolean | undefined>
+  ): Promise<unknown> {
+    const url = this.buildUrl(path, params);
     return this.request(url, {
       method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  async patch(
+    path: string,
+    body?: unknown,
+    params?: Record<string, string | number | boolean | undefined>
+  ): Promise<unknown> {
+    const url = this.buildUrl(path, params);
+    return this.request(url, {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });

@@ -642,7 +642,8 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
       const result = await client.put(
         customerId
           ? `/api/v1/messaging/campaigns/${campaignId}/resubmit?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}/resubmit`
+          : `/api/v1/messaging/campaigns/${campaignId}/resubmit`,
+        {}
       );
       return formatResponse(result);
     }
@@ -1138,6 +1139,359 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     READ_ONLY_ANNOTATIONS,
     async ({ campaignId, page, size }) => {
       const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}/events`, { page, size });
+      return formatResponse(result);
+    }
+  );
+
+  // ---------------------------------------------------------------------------
+  // Brand Vetting
+  // ---------------------------------------------------------------------------
+
+  // 35. msg_list_vetting_providers — GET /api/v1/messaging/brands/vetting/providers
+  server.tool(
+    "msg_list_vetting_providers",
+    "Use this tool when you need to list the external vetting providers (EVPs) available for brand vetting, along with their identifiers and supported vetting classes.",
+    {},
+    READ_ONLY_ANNOTATIONS,
+    async () => {
+      const result = await client.get("/api/v1/messaging/brands/vetting/providers");
+      return formatResponse(result);
+    }
+  );
+
+  // 36. msg_list_identity_appeal_categories — GET /api/v1/messaging/brands/appeal-categories/identity
+  server.tool(
+    "msg_list_identity_appeal_categories",
+    "Use this tool when you need to retrieve the list of valid appeal categories that can be used when appealing a brand identity status.",
+    {},
+    READ_ONLY_ANNOTATIONS,
+    async () => {
+      const result = await client.get("/api/v1/messaging/brands/appeal-categories/identity");
+      return formatResponse(result);
+    }
+  );
+
+  // 37. msg_list_vet_appeal_categories — GET /api/v1/messaging/brands/appeal-categories/vet
+  server.tool(
+    "msg_list_vet_appeal_categories",
+    "Use this tool when you need to retrieve the list of valid appeal categories that can be used when appealing a brand vetting result.",
+    {},
+    READ_ONLY_ANNOTATIONS,
+    async () => {
+      const result = await client.get("/api/v1/messaging/brands/appeal-categories/vet");
+      return formatResponse(result);
+    }
+  );
+
+  // 38. msg_request_vetting — POST /api/v1/messaging/brands/{brandId}/vetting
+  server.tool(
+    "msg_request_vetting",
+    "Use this tool when you need to request external vetting for a 10DLC brand from an external vetting provider (EVP), which can improve campaign throughput and approval rates.",
+    {
+      brandId: z
+        .string()
+        .describe("The unique identifier of the brand to request vetting for."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+      evpId: z
+        .string()
+        .describe("The identifier of the external vetting provider (EVP) to perform the vetting (e.g., AEGIS, WMC). Use msg_list_vetting_providers to discover valid values."),
+      vettingClass: z
+        .string()
+        .describe("The vetting class to request from the provider (e.g., STANDARD, POLITICAL)."),
+      additionalRequestPayload: z
+        .string()
+        .describe("Optional additional provider-specific request payload, as a string, required by some vetting providers.")
+        .optional(),
+    },
+    async ({ brandId, customerId, ...body }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/brands/${brandId}/vetting?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/brands/${brandId}/vetting`,
+        body
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // 39. msg_import_vetting — POST /api/v1/messaging/brands/{brandId}/vetting/import
+  server.tool(
+    "msg_import_vetting",
+    "Use this tool when you need to import an existing external vetting result into a 10DLC brand, when the brand was already vetted by a provider outside this account.",
+    {
+      brandId: z
+        .string()
+        .describe("The unique identifier of the brand to import the vetting result into."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+      evpId: z
+        .string()
+        .describe("The identifier of the external vetting provider (EVP) that produced the vetting result being imported."),
+      vettingId: z
+        .string()
+        .describe("The provider-assigned identifier of the existing vetting result to import."),
+      vettingToken: z
+        .string()
+        .describe("Optional vetting token issued by the provider, required by some providers to authorize the import.")
+        .optional(),
+    },
+    async ({ brandId, customerId, ...body }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/brands/${brandId}/vetting/import?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/brands/${brandId}/vetting/import`,
+        body
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // 40. msg_appeal_vetting — POST /api/v1/messaging/brands/{brandId}/vetting/{vettingId}/appeal
+  server.tool(
+    "msg_appeal_vetting",
+    "Use this tool when you need to appeal the result of a specific brand vetting, providing the appeal categories and supporting explanation.",
+    {
+      brandId: z
+        .string()
+        .describe("The unique identifier of the brand whose vetting result is being appealed."),
+      vettingId: z
+        .string()
+        .describe("The unique identifier of the vetting result being appealed."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+      evpId: z
+        .string()
+        .describe("The identifier of the external vetting provider (EVP) that produced the vetting result being appealed."),
+      appealCategories: z
+        .array(z.string().describe("An appeal category identifier. Use msg_list_vet_appeal_categories to discover valid values."))
+        .describe("The list of appeal category identifiers describing the grounds for the vetting appeal."),
+      explanation: z
+        .string()
+        .describe("Optional free-text explanation supporting the vetting appeal.")
+        .optional(),
+      attachmentUuids: z
+        .array(z.string().describe("The UUID of a previously uploaded appeal evidence attachment."))
+        .describe("Optional list of UUIDs referencing previously uploaded appeal evidence attachments.")
+        .optional(),
+    },
+    async ({ brandId, vettingId, customerId, ...body }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/brands/${brandId}/vetting/${vettingId}/appeal?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/brands/${brandId}/vetting/${vettingId}/appeal`,
+        body
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // 41. msg_appeal_brand — POST /api/v1/messaging/brands/{brandId}/appeal
+  server.tool(
+    "msg_appeal_brand",
+    "Use this tool when you need to appeal a 10DLC brand's identity status (e.g., an UNVERIFIED or self-declared identity result), providing the appeal categories and supporting explanation.",
+    {
+      brandId: z
+        .string()
+        .describe("The unique identifier of the brand whose identity status is being appealed."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+      appealCategories: z
+        .array(z.string().describe("An appeal category identifier. Use msg_list_identity_appeal_categories to discover valid values."))
+        .describe("The list of appeal category identifiers describing the grounds for the identity appeal."),
+      explanation: z
+        .string()
+        .describe("Optional free-text explanation supporting the identity appeal.")
+        .optional(),
+      attachmentUuids: z
+        .array(z.string().describe("The UUID of a previously uploaded appeal evidence attachment."))
+        .describe("Optional list of UUIDs referencing previously uploaded appeal evidence attachments.")
+        .optional(),
+    },
+    async ({ brandId, customerId, ...body }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/brands/${brandId}/appeal?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/brands/${brandId}/appeal`,
+        body
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // 42. msg_revet_brand — PUT /api/v1/messaging/brands/{brandId}/revet
+  server.tool(
+    "msg_revet_brand",
+    "Use this tool when you need to trigger a re-vetting of a 10DLC brand, re-running brand identity verification at TCR.",
+    {
+      brandId: z
+        .string()
+        .describe("The unique identifier of the brand to re-vet."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+    },
+    async ({ brandId, customerId }) => {
+      const result = await client.put(
+        customerId
+          ? `/api/v1/messaging/brands/${brandId}/revet?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/brands/${brandId}/revet`
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // ---------------------------------------------------------------------------
+  // CNP Registration & Migration
+  // ---------------------------------------------------------------------------
+
+  // 43. msg_brand_cnp_register — POST /api/v1/messaging/brands/{brandId}/cnp-register
+  server.tool(
+    "msg_brand_cnp_register",
+    "Use this tool when you need to retry the Connectivity Partner (CNP) registration for a 10DLC brand that previously failed to register with a downstream connectivity partner.",
+    {
+      brandId: z
+        .string()
+        .describe("The unique identifier of the brand to retry CNP registration for."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+    },
+    async ({ brandId, customerId }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/brands/${brandId}/cnp-register?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/brands/${brandId}/cnp-register`,
+        {}
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // 44. msg_campaign_cnp_register — POST /api/v1/messaging/campaigns/{campaignId}/cnp-register
+  server.tool(
+    "msg_campaign_cnp_register",
+    "Use this tool when you need to retry the Connectivity Partner (CNP) registration for a 10DLC campaign that previously failed to register with a downstream connectivity partner.",
+    {
+      campaignId: z
+        .string()
+        .describe("The unique identifier of the campaign to retry CNP registration for."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+    },
+    async ({ campaignId, customerId }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/campaigns/${campaignId}/cnp-register?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/campaigns/${campaignId}/cnp-register`,
+        {}
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // 45. msg_get_cnp_migration — GET /api/v1/messaging/campaigns/{campaignId}/cnp-migration
+  server.tool(
+    "msg_get_cnp_migration",
+    "Use this tool when you need to check the status of a Connectivity Partner (CNP) migration for a 10DLC campaign.",
+    {
+      campaignId: z
+        .string()
+        .describe("The unique identifier of the campaign whose CNP migration status to retrieve."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ campaignId, customerId }) => {
+      const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}/cnp-migration`, { customerId });
+      return formatResponse(result);
+    }
+  );
+
+  // 46. msg_start_cnp_migration — POST /api/v1/messaging/campaigns/{campaignId}/cnp-migration
+  server.tool(
+    "msg_start_cnp_migration",
+    "Use this tool when you need to initiate a Connectivity Partner (CNP) migration for a 10DLC campaign, moving it to a different downstream connectivity partner.",
+    {
+      campaignId: z
+        .string()
+        .describe("The unique identifier of the campaign to initiate CNP migration for."),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+      migrationData: z
+        .record(z.string())
+        .describe("A map of string key/value pairs describing the migration parameters as required by the API (e.g., target CNP identifiers)."),
+    },
+    async ({ campaignId, customerId, migrationData }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/campaigns/${campaignId}/cnp-migration?customerId=${encodeURIComponent(customerId)}`
+          : `/api/v1/messaging/campaigns/${campaignId}/cnp-migration`,
+        migrationData
+      );
+      return formatResponse(result);
+    }
+  );
+
+  // 47. msg_cancel_cnp_migration — DELETE /api/v1/messaging/campaigns/{campaignId}/cnp-migration
+  server.tool(
+    "msg_cancel_cnp_migration",
+    "Use this tool when you need to cancel an in-progress Connectivity Partner (CNP) migration for a 10DLC campaign.",
+    {
+      campaignId: z
+        .string()
+        .describe("The unique identifier of the campaign whose CNP migration to cancel."),
+      explanation: z
+        .string()
+        .describe("Optional explanation for why the CNP migration is being cancelled.")
+        .optional(),
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the request to a specific customer.")
+        .optional(),
+    },
+    async ({ campaignId, explanation, customerId }) => {
+      const result = await client.delete(`/api/v1/messaging/campaigns/${campaignId}/cnp-migration`, {
+        explanation,
+        customerId,
+      });
+      return formatResponse(result);
+    }
+  );
+
+  // 48. msg_cnp_backfill — POST /api/v1/messaging/cnp-backfill
+  server.tool(
+    "msg_cnp_backfill",
+    "Use this tool when you need to backfill Connectivity Partner (CNP) registrations across existing brands and campaigns, registering them with a downstream connectivity partner in bulk.",
+    {
+      customerId: z
+        .string()
+        .describe("Optional customer ID to scope the backfill to a specific customer.")
+        .optional(),
+    },
+    async ({ customerId }) => {
+      const result = await client.post(
+        customerId
+          ? `/api/v1/messaging/cnp-backfill?customerId=${encodeURIComponent(customerId)}`
+          : "/api/v1/messaging/cnp-backfill",
+        {}
+      );
       return formatResponse(result);
     }
   );

@@ -86,10 +86,17 @@ export function registerTollfreeTools(
   server.tool(
     "tf_list_templates",
     "Use when you need to retrieve all toll-free routing templates available in the account.",
-    {},
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose toll-free templates to list"),
+    },
     READ_ONLY_ANNOTATIONS,
-    async () => {
-      const data = await client.get("/api/v1/tollfree/templates");
+    async ({ customerId }) => {
+      const data = await client.get("/api/v1/tollfree/templates", {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
@@ -102,12 +109,17 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Name of the template to retrieve"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
     },
     READ_ONLY_ANNOTATIONS,
-    async ({ tmplName }) => {
+    async ({ tmplName, customerId }) => {
       if (!tmplName) return errorResult("tmplName is required");
       const data = await client.get(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}`
+        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -121,13 +133,18 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Unique name for the new template"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that will own the new template"),
       ...templateBodyFields,
     },
-    async ({ tmplName, ...rest }) => {
-      const data = await client.post("/api/v1/tollfree/templates", {
-        tmplName,
-        ...rest,
-      });
+    async ({ tmplName, customerId, ...rest }) => {
+      const data = await client.post(
+        "/api/v1/tollfree/templates",
+        { tmplName, ...rest },
+        { customerId }
+      );
       return formatResponse(data);
     }
   );
@@ -140,6 +157,10 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Name of the template to update"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
       recVersionId: z
         .string()
         .describe("Current record version ID for optimistic concurrency control"),
@@ -149,13 +170,17 @@ export function registerTollfreeTools(
         .describe("Template record completion part indicator"),
       ...templateBodyFields,
     },
-    async ({ tmplName, recVersionId, tmplRecCompPart, ...rest }) => {
-      const data = await client.put("/api/v1/tollfree/templates", {
-        tmplName,
-        recVersionId,
-        ...(tmplRecCompPart !== undefined ? { tmplRecCompPart } : {}),
-        ...rest,
-      });
+    async ({ tmplName, customerId, recVersionId, tmplRecCompPart, ...rest }) => {
+      const data = await client.put(
+        "/api/v1/tollfree/templates",
+        {
+          tmplName,
+          recVersionId,
+          ...(tmplRecCompPart !== undefined ? { tmplRecCompPart } : {}),
+          ...rest,
+        },
+        { customerId }
+      );
       return formatResponse(data);
     }
   );
@@ -168,10 +193,21 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Name of the template to delete"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
+      effDtTm: z
+        .string()
+        .describe("Effective date/time of the template version to delete"),
+      recVersionId: z
+        .string()
+        .describe("Current record version ID for optimistic concurrency control"),
     },
-    async ({ tmplName }) => {
+    async ({ tmplName, customerId, effDtTm, recVersionId }) => {
       const data = await client.delete(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}`
+        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}`,
+        { customerId, effDtTm, recVersionId }
       );
       return formatResponse(data);
     }
@@ -185,10 +221,19 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Name of the template to lock"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
+      effDtTm: z
+        .string()
+        .describe("Effective date/time of the template version to lock"),
     },
-    async ({ tmplName }) => {
+    async ({ tmplName, customerId, effDtTm }) => {
       const data = await client.put(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/lock`
+        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/lock`,
+        undefined,
+        { customerId, effDtTm }
       );
       return formatResponse(data);
     }
@@ -202,10 +247,19 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Name of the template to unlock"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
+      effDtTm: z
+        .string()
+        .describe("Effective date/time of the template version to unlock"),
     },
-    async ({ tmplName }) => {
+    async ({ tmplName, customerId, effDtTm }) => {
       const data = await client.put(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/unlock`
+        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/unlock`,
+        undefined,
+        { customerId, effDtTm }
       );
       return formatResponse(data);
     }
@@ -228,14 +282,17 @@ export function registerTollfreeTools(
       tgtEffDtTm: z
         .string()
         .describe("Effective date/time for the new destination template version"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the templates"),
     },
-    async ({ srcTmplName, srcEffDtTm, tgtTmplName, tgtEffDtTm }) => {
-      const data = await client.post("/api/v1/tollfree/templates/copy", {
-        srcTmplName,
-        srcEffDtTm,
-        tgtTmplName,
-        tgtEffDtTm,
-      });
+    async ({ srcTmplName, srcEffDtTm, tgtTmplName, tgtEffDtTm, customerId }) => {
+      const data = await client.post(
+        "/api/v1/tollfree/templates/copy",
+        { srcTmplName, srcEffDtTm, tgtTmplName, tgtEffDtTm },
+        { customerId }
+      );
       return formatResponse(data);
     }
   );
@@ -248,10 +305,19 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Name of the template to disconnect"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
+      effDtTm: z
+        .string()
+        .describe("Effective date/time of the template version to disconnect"),
     },
-    async ({ tmplName }) => {
+    async ({ tmplName, customerId, effDtTm }) => {
       const data = await client.post(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/disconnect`
+        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/disconnect`,
+        undefined,
+        { customerId, effDtTm }
       );
       return formatResponse(data);
     }
@@ -265,11 +331,16 @@ export function registerTollfreeTools(
       tmplName: z
         .string()
         .describe("Name of the template whose history to retrieve"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
     },
     READ_ONLY_ANNOTATIONS,
-    async ({ tmplName }) => {
+    async ({ tmplName, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history`
+        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -289,11 +360,16 @@ export function registerTollfreeTools(
       activityTimestamp: z
         .string()
         .describe("Activity timestamp that uniquely identifies this history entry"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the template"),
     },
     READ_ONLY_ANNOTATIONS,
-    async ({ tmplName, effDtTm, activityTimestamp }) => {
+    async ({ tmplName, effDtTm, activityTimestamp, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history/${encodeURIComponent(effDtTm)}/${encodeURIComponent(activityTimestamp)}`
+        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history/${encodeURIComponent(effDtTm)}/${encodeURIComponent(activityTimestamp)}`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -307,10 +383,17 @@ export function registerTollfreeTools(
   server.tool(
     "tf_list_drafts",
     "Use when you need to list all saved toll-free template drafts that have not yet been pushed to Somos.",
-    {},
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose template drafts to list"),
+    },
     READ_ONLY_ANNOTATIONS,
-    async () => {
-      const data = await client.get("/api/v1/tollfree/templates/drafts");
+    async ({ customerId }) => {
+      const data = await client.get("/api/v1/tollfree/templates/drafts", {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
@@ -323,11 +406,16 @@ export function registerTollfreeTools(
       draftId: z
         .string()
         .describe("Unique identifier of the draft to retrieve"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the draft"),
     },
     READ_ONLY_ANNOTATIONS,
-    async ({ draftId }) => {
+    async ({ draftId, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`
+        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -338,14 +426,19 @@ export function registerTollfreeTools(
     "tf_save_draft",
     "Use when you need to save a toll-free template as a draft for later review before pushing to Somos.",
     {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that will own the draft"),
       body: z
         .record(z.string(), z.unknown())
         .describe("Request body containing the draft template data"),
     },
-    async ({ body }) => {
+    async ({ customerId, body }) => {
       const data = await client.post(
         "/api/v1/tollfree/templates/drafts",
-        body
+        body,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -359,10 +452,15 @@ export function registerTollfreeTools(
       draftId: z
         .string()
         .describe("Unique identifier of the draft to delete"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the draft"),
     },
-    async ({ draftId }) => {
+    async ({ draftId, customerId }) => {
       const data = await client.delete(
-        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`
+        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -376,10 +474,16 @@ export function registerTollfreeTools(
       draftId: z
         .string()
         .describe("Unique identifier of the draft to push to Somos"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the draft"),
     },
-    async ({ draftId }) => {
+    async ({ draftId, customerId }) => {
       const data = await client.post(
-        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}/push`
+        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}/push`,
+        undefined,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -394,12 +498,18 @@ export function registerTollfreeTools(
     "tf_query_status",
     "Use when you need to query the current status of one or more toll-free numbers in Somos.",
     {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose numbers to query"),
       body: z
         .record(z.string(), z.unknown())
         .describe("Request body containing the numbers array and any query options"),
     },
-    async ({ body }) => {
-      const data = await client.put("/api/v1/tollfree/query", body);
+    async ({ customerId, body }) => {
+      const data = await client.put("/api/v1/tollfree/query", body, {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
@@ -416,12 +526,17 @@ export function registerTollfreeTools(
         .number()
         .optional()
         .describe("Maximum number of spare numbers to return"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID on whose behalf to search for spare numbers"),
     },
-    async ({ pattern, quantity }) => {
-      const data = await client.post("/api/v1/tollfree/search-spare", {
-        pattern,
-        ...(quantity !== undefined ? { quantity } : {}),
-      });
+    async ({ pattern, quantity, customerId }) => {
+      const data = await client.post(
+        "/api/v1/tollfree/search-spare",
+        { pattern, ...(quantity !== undefined ? { quantity } : {}) },
+        { customerId }
+      );
       return formatResponse(data);
     }
   );
@@ -438,12 +553,17 @@ export function registerTollfreeTools(
         .number()
         .optional()
         .describe("Number of toll-free numbers to reserve"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID on whose behalf to search and reserve numbers"),
     },
-    async ({ pattern, quantity }) => {
-      const data = await client.post("/api/v1/tollfree/search-and-reserve", {
-        pattern,
-        ...(quantity !== undefined ? { quantity } : {}),
-      });
+    async ({ pattern, quantity, customerId }) => {
+      const data = await client.post(
+        "/api/v1/tollfree/search-and-reserve",
+        { pattern, ...(quantity !== undefined ? { quantity } : {}) },
+        { customerId }
+      );
       return formatResponse(data);
     }
   );
@@ -456,9 +576,17 @@ export function registerTollfreeTools(
       numbers: z
         .array(z.string())
         .describe("List of toll-free numbers to reserve, e.g. ['8005551234']"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID on whose behalf to reserve the numbers"),
     },
-    async ({ numbers }) => {
-      const data = await client.post("/api/v1/tollfree/reserve", { numbers });
+    async ({ numbers, customerId }) => {
+      const data = await client.post(
+        "/api/v1/tollfree/reserve",
+        { numbers },
+        { customerId }
+      );
       return formatResponse(data);
     }
   );
@@ -471,10 +599,15 @@ export function registerTollfreeTools(
       tfn: z
         .string()
         .describe("The toll-free number whose reservation should be released, e.g. '8005551234'"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that holds the reservation"),
     },
-    async ({ tfn }) => {
+    async ({ tfn, customerId }) => {
       const data = await client.delete(
-        `/api/v1/tollfree/reserve/${encodeURIComponent(tfn)}`
+        `/api/v1/tollfree/reserve/${encodeURIComponent(tfn)}`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -497,14 +630,17 @@ export function registerTollfreeTools(
       svcOrderNum: z
         .string()
         .describe("Service order number associated with this activation"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID on whose behalf to activate the numbers"),
     },
-    async ({ numbers, tmplName, effDtTm, svcOrderNum }) => {
-      const data = await client.post("/api/v1/tollfree/activate", {
-        numbers,
-        tmplName,
-        effDtTm,
-        svcOrderNum,
-      });
+    async ({ numbers, tmplName, effDtTm, svcOrderNum, customerId }) => {
+      const data = await client.post(
+        "/api/v1/tollfree/activate",
+        { numbers, tmplName, effDtTm, svcOrderNum },
+        { customerId }
+      );
       return formatResponse(data);
     }
   );
@@ -517,10 +653,16 @@ export function registerTollfreeTools(
       num: z
         .string()
         .describe("The toll-free number to disconnect, e.g. '8005551234'"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the number"),
     },
-    async ({ num }) => {
+    async ({ num, customerId }) => {
       const data = await client.post(
-        `/api/v1/tollfree/disconnect/${encodeURIComponent(num)}`
+        `/api/v1/tollfree/disconnect/${encodeURIComponent(num)}`,
+        undefined,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -531,12 +673,18 @@ export function registerTollfreeTools(
     "tf_change_resporg",
     "Use when you need to transfer responsibility of a toll-free number to a different Responsible Organization (RespOrg).",
     {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID on whose behalf to change the RespOrg"),
       body: z
         .record(z.string(), z.unknown())
         .describe("Request body containing the RespOrg change details"),
     },
-    async ({ body }) => {
-      const data = await client.post("/api/v1/tollfree/change-resporg", body);
+    async ({ customerId, body }) => {
+      const data = await client.post("/api/v1/tollfree/change-resporg", body, {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
@@ -561,10 +709,17 @@ export function registerTollfreeTools(
   server.tool(
     "tf_get_inventory",
     "Use when you need to retrieve the full list of toll-free numbers in the account's inventory.",
-    {},
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose toll-free inventory to retrieve"),
+    },
     READ_ONLY_ANNOTATIONS,
-    async () => {
-      const data = await client.get("/api/v1/tollfree/inventory");
+    async ({ customerId }) => {
+      const data = await client.get("/api/v1/tollfree/inventory", {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
@@ -592,10 +747,17 @@ export function registerTollfreeTools(
   server.tool(
     "tf_get_reserved_numbers",
     "Use when you need to list all toll-free numbers that are currently in a reserved state.",
-    {},
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose reserved numbers to list"),
+    },
     READ_ONLY_ANNOTATIONS,
-    async () => {
-      const data = await client.get("/api/v1/tollfree/reserved-numbers");
+    async ({ customerId }) => {
+      const data = await client.get("/api/v1/tollfree/reserved-numbers", {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
@@ -608,11 +770,16 @@ export function registerTollfreeTools(
       num: z
         .string()
         .describe("The toll-free number to query the pointer record for, e.g. '8005551234'"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the number"),
     },
     READ_ONLY_ANNOTATIONS,
-    async ({ num }) => {
+    async ({ num, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/pointer-record/${encodeURIComponent(num)}`
+        `/api/v1/tollfree/pointer-record/${encodeURIComponent(num)}`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -626,11 +793,16 @@ export function registerTollfreeTools(
       tfn: z
         .string()
         .describe("The toll-free number whose history to retrieve, e.g. '8005551234'"),
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the number"),
     },
     READ_ONLY_ANNOTATIONS,
-    async ({ tfn }) => {
+    async ({ tfn, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/history/${encodeURIComponent(tfn)}`
+        `/api/v1/tollfree/history/${encodeURIComponent(tfn)}`,
+        { customerId }
       );
       return formatResponse(data);
     }
@@ -675,11 +847,18 @@ export function registerTollfreeTools(
   // 33. tf_get_customer_config
   server.tool(
     "tf_get_customer_config",
-    "Use when you need to retrieve the toll-free configuration settings for the current customer account.",
-    {},
+    "Use when you need to retrieve the toll-free configuration settings for a customer account.",
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose toll-free configuration to retrieve"),
+    },
     READ_ONLY_ANNOTATIONS,
-    async () => {
-      const data = await client.get("/api/v1/tollfree/customer-config");
+    async ({ customerId }) => {
+      const data = await client.get("/api/v1/tollfree/customer-config", {
+        customerId,
+      });
       return formatResponse(data);
     }
   );
@@ -760,10 +939,136 @@ export function registerTollfreeTools(
   server.tool(
     "tf_get_sync_history",
     "Use when you need to review the history of past toll-free inventory sync jobs.",
-    {},
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID whose sync job history to retrieve"),
+    },
     READ_ONLY_ANNOTATIONS,
-    async () => {
-      const data = await client.get("/api/v1/tollfree/sync/history");
+    async ({ customerId }) => {
+      const data = await client.get("/api/v1/tollfree/sync/history", {
+        customerId,
+      });
+      return formatResponse(data);
+    }
+  );
+
+  // 38. tf_get_sync_diff
+  server.tool(
+    "tf_get_sync_diff",
+    "Use when you need to review the differences a completed sync job detected between local toll-free data and Somos before committing or rejecting it.",
+    {
+      syncJobId: z
+        .string()
+        .uuid()
+        .describe("Unique identifier of the sync job whose diff to retrieve"),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ syncJobId }) => {
+      const data = await client.get(
+        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/diff`
+      );
+      return formatResponse(data);
+    }
+  );
+
+  // 39. tf_commit_sync
+  server.tool(
+    "tf_commit_sync",
+    "Use when you need to commit a completed toll-free sync job, applying the detected changes from Somos to the local inventory.",
+    {
+      syncJobId: z
+        .string()
+        .uuid()
+        .describe("Unique identifier of the sync job to commit"),
+    },
+    async ({ syncJobId }) => {
+      const data = await client.post(
+        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/commit`
+      );
+      return formatResponse(data);
+    }
+  );
+
+  // 40. tf_reject_sync
+  server.tool(
+    "tf_reject_sync",
+    "Use when you need to reject a completed toll-free sync job, discarding its detected changes without applying them.",
+    {
+      syncJobId: z
+        .string()
+        .uuid()
+        .describe("Unique identifier of the sync job to reject"),
+    },
+    async ({ syncJobId }) => {
+      const data = await client.post(
+        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/reject`
+      );
+      return formatResponse(data);
+    }
+  );
+
+  // -------------------------------------------------------------------------
+  // POINTER RECORD (PTR) OPERATIONS
+  // -------------------------------------------------------------------------
+
+  // 41. tf_list_ptr_operations
+  server.tool(
+    "tf_list_ptr_operations",
+    "Use when you need to list the pointer-record (PTR) operations queued or processed for a specific toll-free number.",
+    {
+      customerId: z
+        .string()
+        .uuid()
+        .describe("Customer UUID that owns the number"),
+      telephoneNumber: z
+        .string()
+        .describe("The toll-free number whose PTR operations to list, e.g. '8005551234'"),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ customerId, telephoneNumber }) => {
+      const data = await client.get("/api/v1/tollfree/ptr-operations", {
+        customerId,
+        telephoneNumber,
+      });
+      return formatResponse(data);
+    }
+  );
+
+  // 42. tf_get_ptr_operation
+  server.tool(
+    "tf_get_ptr_operation",
+    "Use when you need the full details and current status of a single pointer-record (PTR) operation by its ID.",
+    {
+      id: z
+        .string()
+        .uuid()
+        .describe("Unique identifier of the PTR operation to retrieve"),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ id }) => {
+      const data = await client.get(
+        `/api/v1/tollfree/ptr-operations/${encodeURIComponent(id)}`
+      );
+      return formatResponse(data);
+    }
+  );
+
+  // 43. tf_retry_ptr_operation
+  server.tool(
+    "tf_retry_ptr_operation",
+    "Use when you need to retry a failed pointer-record (PTR) operation by its ID.",
+    {
+      id: z
+        .string()
+        .uuid()
+        .describe("Unique identifier of the PTR operation to retry"),
+    },
+    async ({ id }) => {
+      const data = await client.post(
+        `/api/v1/tollfree/ptr-operations/${encodeURIComponent(id)}/retry`
+      );
       return formatResponse(data);
     }
   );

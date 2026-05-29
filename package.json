@@ -1,6 +1,6 @@
 {
   "name": "tniq-mcp",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "MCP server for TNIQ by Ringer — telecom number management, porting, toll-free, messaging, and CNAM APIs",
   "type": "module",
   "main": "dist/index.js",
@@ -25,6 +25,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "sync-spec": "node scripts/sync-spec.mjs",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "postinstall": "node postinstall.js",
@@ -48,8 +49,15 @@
     "type": "git",
     "url": "git+https://github.com/Ringer/tniq-mcp.git"
   },
+  "homepage": "https://ringer.tel",
+  "bugs": {
+    "url": "https://github.com/Ringer/tniq-mcp/issues"
+  },
   "author": "Ringer",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
     "zod": "^3.23.0"

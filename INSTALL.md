@@ -1,10 +1,17 @@
 # Installation
 
-## One-command install
+## Recommended: global install + setup
 
 ```bash
-npx tniq-mcp setup
+npm install -g tniq-mcp
+tniq-mcp setup
 ```
+
+The `setup` wizard collects your API key, detects installed MCP clients
+(Claude, Cursor, Copilot, Codex, ChatGPT), and registers the server for you.
+
+If you prefer not to install globally, the per-client instructions below use
+`npx -y tniq-mcp` instead.
 
 ## Per-client instructions
 

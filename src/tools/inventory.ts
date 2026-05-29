@@ -104,54 +104,84 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     }
   );
 
-  // 6. inv_get_portable — GET /api/v1/inventory/numbers/{telephoneNumber}/portable
+  // 6. inv_disconnect_number — POST /api/v1/inventory/numbers/{telephoneNumber}/disconnect
   server.tool(
-    "inv_get_portable",
-    "Use this tool when you need to check whether a telephone number is currently marked as portable in inventory.",
+    "inv_disconnect_number",
+    "Use this tool when you need to disconnect a telephone number, transitioning it out of active service in inventory.",
     {
       telephoneNumber: z
         .string()
-        .describe("The 10-digit telephone number to check portable status for.")
+        .describe("The 10-digit telephone number to disconnect.")
         .refine(isValidTn, { message: "telephoneNumber must be exactly 10 digits" }),
     },
-    READ_ONLY_ANNOTATIONS,
     async ({ telephoneNumber }) => {
-      const result = await client.get(`/api/v1/inventory/numbers/${telephoneNumber}/portable`);
+      const result = await client.post(`/api/v1/inventory/numbers/${telephoneNumber}/disconnect`);
       return formatResponse(result);
     }
   );
 
-  // 7. inv_mark_portable — POST /api/v1/inventory/numbers/{telephoneNumber}/portable
+  // 7. inv_set_pin — PUT /api/v1/inventory/numbers/{telephoneNumber}/pin
   server.tool(
-    "inv_mark_portable",
-    "Use this tool when you need to mark a telephone number as portable in inventory, enabling it for LNP porting operations.",
+    "inv_set_pin",
+    "Use this tool when you need to set or update the PIN (and related security details) on an inventory telephone number.",
     {
       telephoneNumber: z
         .string()
-        .describe("The 10-digit telephone number to mark as portable.")
+        .describe("The 10-digit telephone number to set the PIN on.")
         .refine(isValidTn, { message: "telephoneNumber must be exactly 10 digits" }),
       body: z
         .record(z.unknown())
-        .describe("Passthrough object containing portable configuration details."),
+        .describe("Passthrough object containing the PIN details to apply to the number."),
     },
     async ({ telephoneNumber, body }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/${telephoneNumber}/portable`, body);
+      const result = await client.put(`/api/v1/inventory/numbers/${telephoneNumber}/pin`, body);
       return formatResponse(result);
     }
   );
 
-  // 8. inv_clear_portable — DELETE /api/v1/inventory/numbers/{telephoneNumber}/portable
+  // 8. inv_set_quarantine — PATCH /api/v1/inventory/numbers/{telephoneNumber}/quarantine
   server.tool(
-    "inv_clear_portable",
-    "Use this tool when you need to remove the portable designation from a telephone number in inventory.",
+    "inv_set_quarantine",
+    "Use this tool when you need to place a telephone number into quarantine, temporarily holding it out of the available pool for a SPID.",
     {
       telephoneNumber: z
         .string()
-        .describe("The 10-digit telephone number to clear the portable status from.")
+        .describe("The 10-digit telephone number to place into quarantine.")
         .refine(isValidTn, { message: "telephoneNumber must be exactly 10 digits" }),
+      spid: z
+        .string()
+        .describe("The 4-character Service Provider ID that owns the number.")
+        .refine(isValidSpid, { message: "spid must be exactly 4 alphanumeric characters" }),
+      body: z
+        .record(z.unknown())
+        .describe("Passthrough object containing the quarantine details to apply to the number."),
     },
-    async ({ telephoneNumber }) => {
-      const result = await client.delete(`/api/v1/inventory/numbers/${telephoneNumber}/portable`);
+    async ({ telephoneNumber, spid, body }) => {
+      const result = await client.patch(`/api/v1/inventory/numbers/${telephoneNumber}/quarantine`, body, { spid });
+      return formatResponse(result);
+    }
+  );
+
+  // 9. inv_clear_quarantine — DELETE /api/v1/inventory/numbers/{telephoneNumber}/quarantine
+  server.tool(
+    "inv_clear_quarantine",
+    "Use this tool when you need to remove a telephone number from quarantine, returning it from the quarantined state for a SPID.",
+    {
+      telephoneNumber: z
+        .string()
+        .describe("The 10-digit telephone number to release from quarantine.")
+        .refine(isValidTn, { message: "telephoneNumber must be exactly 10 digits" }),
+      spid: z
+        .string()
+        .describe("The 4-character Service Provider ID that owns the number.")
+        .refine(isValidSpid, { message: "spid must be exactly 4 alphanumeric characters" }),
+      reason: z
+        .string()
+        .describe("Optional reason describing why the number is being released from quarantine.")
+        .optional(),
+    },
+    async ({ telephoneNumber, spid, reason }) => {
+      const result = await client.delete(`/api/v1/inventory/numbers/${telephoneNumber}/quarantine`, { spid, reason });
       return formatResponse(result);
     }
   );
@@ -188,6 +218,21 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     async ({ id }) => {
       const result = await client.post(`/api/v1/inventory/numbers/by-id/${id}/release`);
+      return formatResponse(result);
+    }
+  );
+
+  // inv_disconnect_by_id — POST /api/v1/inventory/numbers/by-id/{id}/disconnect
+  server.tool(
+    "inv_disconnect_by_id",
+    "Use this tool when you need to disconnect an inventory number using its internal record ID instead of the telephone number.",
+    {
+      id: z
+        .string()
+        .describe("The internal inventory record ID of the number to disconnect."),
+    },
+    async ({ id }) => {
+      const result = await client.post(`/api/v1/inventory/numbers/by-id/${id}/disconnect`);
       return formatResponse(result);
     }
   );
