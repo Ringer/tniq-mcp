@@ -10,7 +10,7 @@ export interface Config {
 
 const CONFIG_DIR = join(homedir(), ".tniq");
 const CONFIG_FILE = join(CONFIG_DIR, "config.json");
-const DEFAULT_API_URL = "https://tniq-api.ringer.tel/v1";
+const DEFAULT_API_URL = "https://api.tniq.ringer.tel/v1";
 
 export { CONFIG_DIR, CONFIG_FILE, DEFAULT_API_URL };
 
