@@ -3,6 +3,13 @@
 All notable changes to `tniq-mcp` are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.1]
+
+### Changed
+- Homepage / website links (`package.json`, plugin manifest, README, MCP server
+  `websiteUrl`, setup wizard) now point to the TNIQ docs site
+  `https://tniq.ringer.tel/docs`.
+
 ## [1.1.0]
 
 ### Added
