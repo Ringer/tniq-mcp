@@ -7,7 +7,7 @@
     "url": "https://ringer.tel"
   },
   "repository": "https://github.com/Ringer/tniq-mcp",
-  "homepage": "https://ringer.tel",
+  "homepage": "https://tniq.ringer.tel/docs",
   "license": "MIT",
   "keywords": [
     "mcp",
@@ -26,7 +26,7 @@
   "mcpServers": "./.mcp.json",
   "userConfig": {
     "api_token": {
-      "description": "Your TNIQ API token (get one at https://ringer.tel).",
+      "description": "Your TNIQ API token (get one at https://tniq.ringer.tel/docs).",
       "sensitive": true
     }
   }

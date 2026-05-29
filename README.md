@@ -1,6 +1,6 @@
 # tniq-mcp
 
-MCP server for [TNIQ by Ringer](https://ringer.tel) — telecom number management, porting, toll-free, messaging, and CNAM APIs.
+MCP server for [TNIQ by Ringer](https://tniq.ringer.tel/docs) — telecom number management, porting, toll-free, messaging, and CNAM APIs.
 
 ## Quick Start
 

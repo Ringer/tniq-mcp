@@ -5,7 +5,7 @@ import { stdin, stdout } from "node:process";
 import { CONFIG_DIR, CONFIG_FILE, DEFAULT_API_URL } from "./config.js";
 import { ICON_DARK_DATA_URI } from "./icons.js";
 
-const REGISTER_URL = "https://ringer.tel";
+const REGISTER_URL = "https://tniq.ringer.tel/docs";
 const API_BASE_URL = new URL(DEFAULT_API_URL).origin;
 
 export async function runSetup(): Promise<void> {

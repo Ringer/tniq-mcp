@@ -55,7 +55,7 @@ if (subcommand === "setup") {
       description:
         "TNIQ by Ringer — telecom number porting, toll-free, messaging, inventory, and CNAM APIs",
       icons: ICONS,
-      websiteUrl: "https://ringer.tel",
+      websiteUrl: "https://tniq.ringer.tel/docs",
     },
     {
       instructions: TNIQ_KNOWLEDGE,
