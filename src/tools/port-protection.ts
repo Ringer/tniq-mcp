@@ -7,7 +7,7 @@ import { READ_ONLY_ANNOTATIONS } from "../annotations.js";
 export function registerPortProtectionTools(server: McpServer, client: TniqClient): void {
   // ─── Read tools ───────────────────────────────────────────────────────────
 
-  // 1. port_protect_list_rules — GET /api/v1/port-protection-rules
+  // 1. port_protect_list_rules — GET /v1/port-protection-rules
   server.tool(
     "port_protect_list_rules",
     "Use this tool when you need to list the configured port protection rules that govern whether telephone numbers can be ported out, optionally scoped to a specific customer.",
@@ -20,12 +20,12 @@ export function registerPortProtectionTools(server: McpServer, client: TniqClien
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const result = await client.get("/api/v1/port-protection-rules", { customerId });
+      const result = await client.get("/v1/port-protection-rules", { customerId });
       return formatResponse(result);
     }
   );
 
-  // 2. port_protect_get_effective — GET /api/v1/port-protection-rules/effective
+  // 2. port_protect_get_effective — GET /v1/port-protection-rules/effective
   server.tool(
     "port_protect_get_effective",
     "Use this tool when you need to determine the effective port protection rule that applies to a specific telephone number, taking precedence across customer, SPID, and TN scopes into account.",
@@ -41,12 +41,12 @@ export function registerPortProtectionTools(server: McpServer, client: TniqClien
     },
     READ_ONLY_ANNOTATIONS,
     async ({ tn, customerId }) => {
-      const result = await client.get("/api/v1/port-protection-rules/effective", { tn, customerId });
+      const result = await client.get("/v1/port-protection-rules/effective", { tn, customerId });
       return formatResponse(result);
     }
   );
 
-  // 3. port_protect_get_rule — GET /api/v1/port-protection-rules/{ruleId}
+  // 3. port_protect_get_rule — GET /v1/port-protection-rules/{ruleId}
   server.tool(
     "port_protect_get_rule",
     "Use this tool when you need to retrieve the full details of a single port protection rule by its unique rule ID.",
@@ -63,14 +63,14 @@ export function registerPortProtectionTools(server: McpServer, client: TniqClien
     },
     READ_ONLY_ANNOTATIONS,
     async ({ ruleId, customerId }) => {
-      const result = await client.get(`/api/v1/port-protection-rules/${ruleId}`, { customerId });
+      const result = await client.get(`/v1/port-protection-rules/${ruleId}`, { customerId });
       return formatResponse(result);
     }
   );
 
   // ─── Write tools ──────────────────────────────────────────────────────────
 
-  // 4. port_protect_create_rule — POST /api/v1/port-protection-rules
+  // 4. port_protect_create_rule — POST /v1/port-protection-rules
   server.tool(
     "port_protect_create_rule",
     "Use this tool when you need to create a new port protection rule that controls how port-out requests are handled for a customer, SPID, or individual telephone number.",
@@ -121,12 +121,12 @@ export function registerPortProtectionTools(server: McpServer, client: TniqClien
       if (pin !== undefined) body.pin = pin;
       if (reason !== undefined) body.reason = reason;
       if (expiresAt !== undefined) body.expiresAt = expiresAt;
-      const result = await client.post("/api/v1/port-protection-rules", body, { customerId });
+      const result = await client.post("/v1/port-protection-rules", body, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 5. port_protect_update_rule — PUT /api/v1/port-protection-rules/{ruleId}
+  // 5. port_protect_update_rule — PUT /v1/port-protection-rules/{ruleId}
   server.tool(
     "port_protect_update_rule",
     "Use this tool when you need to update an existing port protection rule, such as changing its enforced action, hold period, reason, or expiration.",
@@ -166,12 +166,12 @@ export function registerPortProtectionTools(server: McpServer, client: TniqClien
       if (holdPeriodHours !== undefined) body.holdPeriodHours = holdPeriodHours;
       if (reason !== undefined) body.reason = reason;
       if (expiresAt !== undefined) body.expiresAt = expiresAt;
-      const result = await client.put(`/api/v1/port-protection-rules/${ruleId}`, body, { customerId });
+      const result = await client.put(`/v1/port-protection-rules/${ruleId}`, body, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 6. port_protect_delete_rule — DELETE /api/v1/port-protection-rules/{ruleId}
+  // 6. port_protect_delete_rule — DELETE /v1/port-protection-rules/{ruleId}
   server.tool(
     "port_protect_delete_rule",
     "Use this tool when you need to delete an existing port protection rule by its unique rule ID.",
@@ -187,7 +187,7 @@ export function registerPortProtectionTools(server: McpServer, client: TniqClien
         .optional(),
     },
     async ({ ruleId, customerId }) => {
-      const result = await client.delete(`/api/v1/port-protection-rules/${ruleId}`, { customerId });
+      const result = await client.delete(`/v1/port-protection-rules/${ruleId}`, { customerId });
       return formatResponse(result);
     }
   );

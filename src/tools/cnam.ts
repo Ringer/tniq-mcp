@@ -19,7 +19,7 @@ export function registerCnamTools(server: McpServer, client: TniqClient): void {
     },
     READ_ONLY_ANNOTATIONS,
     async ({ telephoneNumber }) => {
-      const data = await client.get(`/api/v1/cnam/query/${telephoneNumber}`);
+      const data = await client.get(`/v1/cnam/query/${telephoneNumber}`);
       return formatResponse(data);
     }
   );
@@ -78,7 +78,7 @@ export function registerCnamTools(server: McpServer, client: TniqClient): void {
       if (extendedLastName !== undefined) body.extendedLastName = extendedLastName;
       if (extendedBusinessName !== undefined) body.extendedBusinessName = extendedBusinessName;
 
-      const data = await client.post("/api/v1/cnam/activate", body);
+      const data = await client.post("/v1/cnam/activate", body);
       return formatResponse(data);
     }
   );
@@ -93,7 +93,7 @@ export function registerCnamTools(server: McpServer, client: TniqClient): void {
         .refine(isValidTn, { message: "telephoneNumber must be exactly 10 digits" }),
     },
     async ({ telephoneNumber }) => {
-      const data = await client.delete(`/api/v1/cnam/${telephoneNumber}`);
+      const data = await client.delete(`/v1/cnam/${telephoneNumber}`);
       return formatResponse(data);
     }
   );

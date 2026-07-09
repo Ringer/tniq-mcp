@@ -7,7 +7,7 @@ import { READ_ONLY_ANNOTATIONS } from "../annotations.js";
 export function registerReportTools(server: McpServer, client: TniqClient): void {
   // ─── Read tools ───────────────────────────────────────────────────────────
 
-  // 1. report_list_jobs — GET /api/v1/reports/jobs
+  // 1. report_list_jobs — GET /v1/reports/jobs
   server.tool(
     "report_list_jobs",
     "Use this tool when you need to list your recent report jobs and their statuses, optionally limiting how many are returned.",
@@ -20,12 +20,12 @@ export function registerReportTools(server: McpServer, client: TniqClient): void
     },
     READ_ONLY_ANNOTATIONS,
     async ({ limit }) => {
-      const result = await client.get("/api/v1/reports/jobs", { limit });
+      const result = await client.get("/v1/reports/jobs", { limit });
       return formatResponse(result);
     }
   );
 
-  // 2. report_get_job — GET /api/v1/reports/jobs/{id}
+  // 2. report_get_job — GET /v1/reports/jobs/{id}
   server.tool(
     "report_get_job",
     "Use this tool when you need to poll a single report job's status and result by its unique job ID.",
@@ -37,14 +37,14 @@ export function registerReportTools(server: McpServer, client: TniqClient): void
     },
     READ_ONLY_ANNOTATIONS,
     async ({ id }) => {
-      const result = await client.get(`/api/v1/reports/jobs/${id}`);
+      const result = await client.get(`/v1/reports/jobs/${id}`);
       return formatResponse(result);
     }
   );
 
   // ─── Write tools ──────────────────────────────────────────────────────────
 
-  // 3. report_create_job — POST /api/v1/reports/jobs
+  // 3. report_create_job — POST /v1/reports/jobs
   server.tool(
     "report_create_job",
     "Use this tool when you need to queue a new asynchronous report job, such as a SOA queue snapshot, port-out/port-in report, or inventory spreadsheet export.",
@@ -60,7 +60,7 @@ export function registerReportTools(server: McpServer, client: TniqClient): void
     async ({ reportType, params }) => {
       const body: Record<string, unknown> = { reportType };
       if (params !== undefined) body.params = params;
-      const result = await client.post("/api/v1/reports/jobs", body);
+      const result = await client.post("/v1/reports/jobs", body);
       return formatResponse(result);
     }
   );

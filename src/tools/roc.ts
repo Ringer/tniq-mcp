@@ -37,7 +37,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId, direction, status, page, size }) => {
-      const data = await client.get("/api/v1/roc/projects", {
+      const data = await client.get("/v1/roc/projects", {
         customerId,
         direction,
         status,
@@ -58,7 +58,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     READ_ONLY_ANNOTATIONS,
     async ({ projectId }) => {
-      const data = await client.get(`/api/v1/roc/projects/${projectId}`);
+      const data = await client.get(`/v1/roc/projects/${projectId}`);
       return formatResponse(data);
     }
   );
@@ -74,7 +74,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     READ_ONLY_ANNOTATIONS,
     async ({ projectId }) => {
       const data = await client.get(
-        `/api/v1/roc/projects/${projectId}/documents`
+        `/v1/roc/projects/${projectId}/documents`
       );
       return formatResponse(data);
     }
@@ -91,7 +91,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     READ_ONLY_ANNOTATIONS,
     async ({ projectId }) => {
       const data = await client.get(
-        `/api/v1/roc/projects/${projectId}/details`
+        `/v1/roc/projects/${projectId}/details`
       );
       return formatResponse(data);
     }
@@ -108,7 +108,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     READ_ONLY_ANNOTATIONS,
     async ({ projectId }) => {
       const data = await client.get(
-        `/api/v1/roc/projects/${projectId}/audit`
+        `/v1/roc/projects/${projectId}/audit`
       );
       return formatResponse(data);
     }
@@ -163,7 +163,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
       if (notes !== undefined) body.notes = notes;
 
       const data = await client.post(
-        `/api/v1/roc/projects?customerId=${encodeURIComponent(customerId)}`,
+        `/v1/roc/projects?customerId=${encodeURIComponent(customerId)}`,
         body
       );
       return formatResponse(data);
@@ -191,7 +191,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
         body.contactInformation = contactInformation;
 
       const data = await client.post(
-        `/api/v1/roc/projects/${projectId}/submit`,
+        `/v1/roc/projects/${projectId}/submit`,
         body
       );
       return formatResponse(data);
@@ -208,7 +208,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId }) => {
       const data = await client.post(
-        `/api/v1/roc/projects/${projectId}/refresh`
+        `/v1/roc/projects/${projectId}/refresh`
       );
       return formatResponse(data);
     }
@@ -223,7 +223,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
         .describe("The unique identifier of the ROC project to cancel."),
     },
     async ({ projectId }) => {
-      const data = await client.put(`/api/v1/roc/projects/${projectId}/cancel`);
+      const data = await client.put(`/v1/roc/projects/${projectId}/cancel`);
       return formatResponse(data);
     }
   );
@@ -241,7 +241,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId, tfns }) => {
       const data = await client.put(
-        `/api/v1/roc/projects/${projectId}/tfns/remove`,
+        `/v1/roc/projects/${projectId}/tfns/remove`,
         tfns
       );
       return formatResponse(data);
@@ -263,7 +263,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId, body }) => {
       const data = await client.post(
-        `/api/v1/roc/projects/${projectId}/loa/upload`,
+        `/v1/roc/projects/${projectId}/loa/upload`,
         body
       );
       return formatResponse(data);
@@ -342,7 +342,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
       if (email !== undefined) body.email = email;
 
       const data = await client.post(
-        `/api/v1/roc/projects/${projectId}/loa/generate`,
+        `/v1/roc/projects/${projectId}/loa/generate`,
         body
       );
       return formatResponse(data);
@@ -359,7 +359,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId }) => {
       const data = await client.post(
-        `/api/v1/roc/projects/${projectId}/escalate-hdi`
+        `/v1/roc/projects/${projectId}/escalate-hdi`
       );
       return formatResponse(data);
     }
@@ -380,7 +380,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId, body }) => {
       const data = await client.post(
-        `/api/v1/roc/projects/${projectId}/documents/upload`,
+        `/v1/roc/projects/${projectId}/documents/upload`,
         body
       );
       return formatResponse(data);
@@ -402,7 +402,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId, respOrgId }) => {
       const data = await client.put(
-        `/api/v1/roc/inbound/projects/${projectId}/checkout?respOrgId=${encodeURIComponent(respOrgId)}`
+        `/v1/roc/inbound/projects/${projectId}/checkout?respOrgId=${encodeURIComponent(respOrgId)}`
       );
       return formatResponse(data);
     }
@@ -421,7 +421,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId, respOrgId }) => {
       const data = await client.put(
-        `/api/v1/roc/inbound/projects/${projectId}/checkin?respOrgId=${encodeURIComponent(respOrgId)}`
+        `/v1/roc/inbound/projects/${projectId}/checkin?respOrgId=${encodeURIComponent(respOrgId)}`
       );
       return formatResponse(data);
     }
@@ -458,7 +458,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
     },
     async ({ projectId, respOrgId, actions }) => {
       const data = await client.put(
-        `/api/v1/roc/inbound/projects/${projectId}/process`,
+        `/v1/roc/inbound/projects/${projectId}/process`,
         { respOrgId, actions }
       );
       return formatResponse(data);
@@ -488,7 +488,7 @@ export function registerRocTools(server: McpServer, client: TniqClient): void {
         .describe("The end date of the sync window in ISO 8601 format (e.g. '2026-01-31')."),
     },
     async ({ customerId, respOrgId, direction, startDate, endDate }) => {
-      const data = await client.post("/api/v1/roc/sync", {
+      const data = await client.post("/v1/roc/sync", {
         customerId,
         respOrgId,
         direction,

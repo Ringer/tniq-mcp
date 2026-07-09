@@ -94,7 +94,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const data = await client.get("/api/v1/tollfree/templates", {
+      const data = await client.get("/v1/tollfree/templates", {
         customerId,
       });
       return formatResponse(data);
@@ -118,7 +118,7 @@ export function registerTollfreeTools(
     async ({ tmplName, customerId }) => {
       if (!tmplName) return errorResult("tmplName is required");
       const data = await client.get(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}`,
+        `/v1/tollfree/templates/${encodeURIComponent(tmplName)}`,
         { customerId }
       );
       return formatResponse(data);
@@ -141,7 +141,7 @@ export function registerTollfreeTools(
     },
     async ({ tmplName, customerId, ...rest }) => {
       const data = await client.post(
-        "/api/v1/tollfree/templates",
+        "/v1/tollfree/templates",
         { tmplName, ...rest },
         { customerId }
       );
@@ -172,7 +172,7 @@ export function registerTollfreeTools(
     },
     async ({ tmplName, customerId, recVersionId, tmplRecCompPart, ...rest }) => {
       const data = await client.put(
-        "/api/v1/tollfree/templates",
+        "/v1/tollfree/templates",
         {
           tmplName,
           recVersionId,
@@ -206,7 +206,7 @@ export function registerTollfreeTools(
     },
     async ({ tmplName, customerId, effDtTm, recVersionId }) => {
       const data = await client.delete(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}`,
+        `/v1/tollfree/templates/${encodeURIComponent(tmplName)}`,
         { customerId, effDtTm, recVersionId }
       );
       return formatResponse(data);
@@ -231,7 +231,7 @@ export function registerTollfreeTools(
     },
     async ({ tmplName, customerId, effDtTm }) => {
       const data = await client.put(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/lock`,
+        `/v1/tollfree/templates/${encodeURIComponent(tmplName)}/lock`,
         undefined,
         { customerId, effDtTm }
       );
@@ -257,7 +257,7 @@ export function registerTollfreeTools(
     },
     async ({ tmplName, customerId, effDtTm }) => {
       const data = await client.put(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/unlock`,
+        `/v1/tollfree/templates/${encodeURIComponent(tmplName)}/unlock`,
         undefined,
         { customerId, effDtTm }
       );
@@ -289,7 +289,7 @@ export function registerTollfreeTools(
     },
     async ({ srcTmplName, srcEffDtTm, tgtTmplName, tgtEffDtTm, customerId }) => {
       const data = await client.post(
-        "/api/v1/tollfree/templates/copy",
+        "/v1/tollfree/templates/copy",
         { srcTmplName, srcEffDtTm, tgtTmplName, tgtEffDtTm },
         { customerId }
       );
@@ -315,7 +315,7 @@ export function registerTollfreeTools(
     },
     async ({ tmplName, customerId, effDtTm }) => {
       const data = await client.post(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/disconnect`,
+        `/v1/tollfree/templates/${encodeURIComponent(tmplName)}/disconnect`,
         undefined,
         { customerId, effDtTm }
       );
@@ -339,7 +339,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ tmplName, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history`,
+        `/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history`,
         { customerId }
       );
       return formatResponse(data);
@@ -368,7 +368,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ tmplName, effDtTm, activityTimestamp, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history/${encodeURIComponent(effDtTm)}/${encodeURIComponent(activityTimestamp)}`,
+        `/v1/tollfree/templates/${encodeURIComponent(tmplName)}/history/${encodeURIComponent(effDtTm)}/${encodeURIComponent(activityTimestamp)}`,
         { customerId }
       );
       return formatResponse(data);
@@ -391,7 +391,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const data = await client.get("/api/v1/tollfree/templates/drafts", {
+      const data = await client.get("/v1/tollfree/templates/drafts", {
         customerId,
       });
       return formatResponse(data);
@@ -414,7 +414,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ draftId, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`,
+        `/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`,
         { customerId }
       );
       return formatResponse(data);
@@ -436,7 +436,7 @@ export function registerTollfreeTools(
     },
     async ({ customerId, body }) => {
       const data = await client.post(
-        "/api/v1/tollfree/templates/drafts",
+        "/v1/tollfree/templates/drafts",
         body,
         { customerId }
       );
@@ -459,7 +459,7 @@ export function registerTollfreeTools(
     },
     async ({ draftId, customerId }) => {
       const data = await client.delete(
-        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`,
+        `/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}`,
         { customerId }
       );
       return formatResponse(data);
@@ -481,7 +481,7 @@ export function registerTollfreeTools(
     },
     async ({ draftId, customerId }) => {
       const data = await client.post(
-        `/api/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}/push`,
+        `/v1/tollfree/templates/drafts/${encodeURIComponent(draftId)}/push`,
         undefined,
         { customerId }
       );
@@ -507,7 +507,7 @@ export function registerTollfreeTools(
         .describe("Request body containing the numbers array and any query options"),
     },
     async ({ customerId, body }) => {
-      const data = await client.put("/api/v1/tollfree/query", body, {
+      const data = await client.put("/v1/tollfree/query", body, {
         customerId,
       });
       return formatResponse(data);
@@ -533,7 +533,7 @@ export function registerTollfreeTools(
     },
     async ({ pattern, quantity, customerId }) => {
       const data = await client.post(
-        "/api/v1/tollfree/search-spare",
+        "/v1/tollfree/search-spare",
         { pattern, ...(quantity !== undefined ? { quantity } : {}) },
         { customerId }
       );
@@ -560,7 +560,7 @@ export function registerTollfreeTools(
     },
     async ({ pattern, quantity, customerId }) => {
       const data = await client.post(
-        "/api/v1/tollfree/search-and-reserve",
+        "/v1/tollfree/search-and-reserve",
         { pattern, ...(quantity !== undefined ? { quantity } : {}) },
         { customerId }
       );
@@ -583,7 +583,7 @@ export function registerTollfreeTools(
     },
     async ({ numbers, customerId }) => {
       const data = await client.post(
-        "/api/v1/tollfree/reserve",
+        "/v1/tollfree/reserve",
         { numbers },
         { customerId }
       );
@@ -606,7 +606,7 @@ export function registerTollfreeTools(
     },
     async ({ tfn, customerId }) => {
       const data = await client.delete(
-        `/api/v1/tollfree/reserve/${encodeURIComponent(tfn)}`,
+        `/v1/tollfree/reserve/${encodeURIComponent(tfn)}`,
         { customerId }
       );
       return formatResponse(data);
@@ -637,7 +637,7 @@ export function registerTollfreeTools(
     },
     async ({ numbers, tmplName, effDtTm, svcOrderNum, customerId }) => {
       const data = await client.post(
-        "/api/v1/tollfree/activate",
+        "/v1/tollfree/activate",
         { numbers, tmplName, effDtTm, svcOrderNum },
         { customerId }
       );
@@ -660,7 +660,7 @@ export function registerTollfreeTools(
     },
     async ({ num, customerId }) => {
       const data = await client.post(
-        `/api/v1/tollfree/disconnect/${encodeURIComponent(num)}`,
+        `/v1/tollfree/disconnect/${encodeURIComponent(num)}`,
         undefined,
         { customerId }
       );
@@ -682,7 +682,7 @@ export function registerTollfreeTools(
         .describe("Request body containing the RespOrg change details"),
     },
     async ({ customerId, body }) => {
-      const data = await client.post("/api/v1/tollfree/change-resporg", body, {
+      const data = await client.post("/v1/tollfree/change-resporg", body, {
         customerId,
       });
       return formatResponse(data);
@@ -700,7 +700,7 @@ export function registerTollfreeTools(
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const data = await client.get("/api/v1/tollfree/status");
+      const data = await client.get("/v1/tollfree/status");
       return formatResponse(data);
     }
   );
@@ -717,7 +717,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const data = await client.get("/api/v1/tollfree/inventory", {
+      const data = await client.get("/v1/tollfree/inventory", {
         customerId,
       });
       return formatResponse(data);
@@ -736,7 +736,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const data = await client.get("/api/v1/tollfree/inventory/summary", {
+      const data = await client.get("/v1/tollfree/inventory/summary", {
         customerId,
       });
       return formatResponse(data);
@@ -755,7 +755,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const data = await client.get("/api/v1/tollfree/reserved-numbers", {
+      const data = await client.get("/v1/tollfree/reserved-numbers", {
         customerId,
       });
       return formatResponse(data);
@@ -778,7 +778,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ num, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/pointer-record/${encodeURIComponent(num)}`,
+        `/v1/tollfree/pointer-record/${encodeURIComponent(num)}`,
         { customerId }
       );
       return formatResponse(data);
@@ -801,7 +801,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ tfn, customerId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/history/${encodeURIComponent(tfn)}`,
+        `/v1/tollfree/history/${encodeURIComponent(tfn)}`,
         { customerId }
       );
       return formatResponse(data);
@@ -820,7 +820,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ entityId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/entities/${encodeURIComponent(entityId)}/respOrgs`
+        `/v1/tollfree/entities/${encodeURIComponent(entityId)}/respOrgs`
       );
       return formatResponse(data);
     }
@@ -838,7 +838,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ entityId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/entities/${encodeURIComponent(entityId)}/respOrgs/active`
+        `/v1/tollfree/entities/${encodeURIComponent(entityId)}/respOrgs/active`
       );
       return formatResponse(data);
     }
@@ -856,7 +856,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const data = await client.get("/api/v1/tollfree/customer-config", {
+      const data = await client.get("/v1/tollfree/customer-config", {
         customerId,
       });
       return formatResponse(data);
@@ -895,7 +895,7 @@ export function registerTollfreeTools(
       if (respOrgIds !== undefined) body.respOrgIds = respOrgIds;
       if (includeCpr !== undefined) body.includeCpr = includeCpr;
       if (triggeredBy !== undefined) body.triggeredBy = triggeredBy;
-      const data = await client.post("/api/v1/tollfree/sync/start", body);
+      const data = await client.post("/v1/tollfree/sync/start", body);
       return formatResponse(data);
     }
   );
@@ -912,7 +912,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ syncJobId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}`
+        `/v1/tollfree/sync/${encodeURIComponent(syncJobId)}`
       );
       return formatResponse(data);
     }
@@ -929,7 +929,7 @@ export function registerTollfreeTools(
     },
     async ({ syncJobId }) => {
       const data = await client.delete(
-        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}`
+        `/v1/tollfree/sync/${encodeURIComponent(syncJobId)}`
       );
       return formatResponse(data);
     }
@@ -947,7 +947,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const data = await client.get("/api/v1/tollfree/sync/history", {
+      const data = await client.get("/v1/tollfree/sync/history", {
         customerId,
       });
       return formatResponse(data);
@@ -967,7 +967,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ syncJobId }) => {
       const data = await client.get(
-        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/diff`
+        `/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/diff`
       );
       return formatResponse(data);
     }
@@ -985,7 +985,7 @@ export function registerTollfreeTools(
     },
     async ({ syncJobId }) => {
       const data = await client.post(
-        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/commit`
+        `/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/commit`
       );
       return formatResponse(data);
     }
@@ -1003,7 +1003,7 @@ export function registerTollfreeTools(
     },
     async ({ syncJobId }) => {
       const data = await client.post(
-        `/api/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/reject`
+        `/v1/tollfree/sync/${encodeURIComponent(syncJobId)}/reject`
       );
       return formatResponse(data);
     }
@@ -1028,7 +1028,7 @@ export function registerTollfreeTools(
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId, telephoneNumber }) => {
-      const data = await client.get("/api/v1/tollfree/ptr-operations", {
+      const data = await client.get("/v1/tollfree/ptr-operations", {
         customerId,
         telephoneNumber,
       });
@@ -1049,7 +1049,7 @@ export function registerTollfreeTools(
     READ_ONLY_ANNOTATIONS,
     async ({ id }) => {
       const data = await client.get(
-        `/api/v1/tollfree/ptr-operations/${encodeURIComponent(id)}`
+        `/v1/tollfree/ptr-operations/${encodeURIComponent(id)}`
       );
       return formatResponse(data);
     }
@@ -1067,7 +1067,7 @@ export function registerTollfreeTools(
     },
     async ({ id }) => {
       const data = await client.post(
-        `/api/v1/tollfree/ptr-operations/${encodeURIComponent(id)}/retry`
+        `/v1/tollfree/ptr-operations/${encodeURIComponent(id)}/retry`
       );
       return formatResponse(data);
     }
