@@ -8,7 +8,7 @@ import { isValidTn, isValidSpid } from "../utils/validation.js";
 export function registerInventoryTools(server: McpServer, client: TniqClient): void {
   // ─── Number Details & Actions ─────────────────────────────────────────────
 
-  // 1. inv_get_number — GET /api/v1/inventory/numbers/{telephoneNumber}
+  // 1. inv_get_number — GET /v1/inventory/numbers/{telephoneNumber}
   server.tool(
     "inv_get_number",
     "Use this tool when you need to retrieve the full inventory details for a specific telephone number, including its status, SPID ownership, and metadata.",
@@ -25,12 +25,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ telephoneNumber, spid }) => {
-      const result = await client.get(`/api/v1/inventory/numbers/${telephoneNumber}`, { spid });
+      const result = await client.get(`/v1/inventory/numbers/${telephoneNumber}`, { spid });
       return formatResponse(result);
     }
   );
 
-  // 2. inv_reserve_number — POST /api/v1/inventory/numbers/{telephoneNumber}/reserve
+  // 2. inv_reserve_number — POST /v1/inventory/numbers/{telephoneNumber}/reserve
   server.tool(
     "inv_reserve_number",
     "Use this tool when you need to reserve a telephone number in inventory, optionally attaching metadata, to prevent it from being assigned to another party.",
@@ -45,12 +45,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .optional(),
     },
     async ({ telephoneNumber, body }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/${telephoneNumber}/reserve`, body);
+      const result = await client.post(`/v1/inventory/numbers/${telephoneNumber}/reserve`, body);
       return formatResponse(result);
     }
   );
 
-  // 3. inv_release_number — POST /api/v1/inventory/numbers/{telephoneNumber}/release
+  // 3. inv_release_number — POST /v1/inventory/numbers/{telephoneNumber}/release
   server.tool(
     "inv_release_number",
     "Use this tool when you need to release a reserved or assigned telephone number back to the available inventory pool.",
@@ -61,12 +61,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .refine(isValidTn, { message: "telephoneNumber must be exactly 10 digits" }),
     },
     async ({ telephoneNumber }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/${telephoneNumber}/release`);
+      const result = await client.post(`/v1/inventory/numbers/${telephoneNumber}/release`);
       return formatResponse(result);
     }
   );
 
-  // 4. inv_assign_number — POST /api/v1/inventory/numbers/{telephoneNumber}/assign
+  // 4. inv_assign_number — POST /v1/inventory/numbers/{telephoneNumber}/assign
   server.tool(
     "inv_assign_number",
     "Use this tool when you need to assign a telephone number from inventory to a subscriber or service, along with required metadata.",
@@ -80,12 +80,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("Passthrough metadata object containing assignment details (e.g., subscriber information)."),
     },
     async ({ telephoneNumber, body }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/${telephoneNumber}/assign`, body);
+      const result = await client.post(`/v1/inventory/numbers/${telephoneNumber}/assign`, body);
       return formatResponse(result);
     }
   );
 
-  // 5. inv_update_metadata — PUT /api/v1/inventory/numbers/{telephoneNumber}/metadata
+  // 5. inv_update_metadata — PUT /v1/inventory/numbers/{telephoneNumber}/metadata
   server.tool(
     "inv_update_metadata",
     "Use this tool when you need to update the metadata fields attached to an existing inventory number record.",
@@ -99,12 +99,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("Passthrough metadata object containing the updated metadata fields and values."),
     },
     async ({ telephoneNumber, body }) => {
-      const result = await client.put(`/api/v1/inventory/numbers/${telephoneNumber}/metadata`, body);
+      const result = await client.put(`/v1/inventory/numbers/${telephoneNumber}/metadata`, body);
       return formatResponse(result);
     }
   );
 
-  // 6. inv_disconnect_number — POST /api/v1/inventory/numbers/{telephoneNumber}/disconnect
+  // 6. inv_disconnect_number — POST /v1/inventory/numbers/{telephoneNumber}/disconnect
   server.tool(
     "inv_disconnect_number",
     "Use this tool when you need to disconnect a telephone number, transitioning it out of active service in inventory.",
@@ -115,12 +115,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .refine(isValidTn, { message: "telephoneNumber must be exactly 10 digits" }),
     },
     async ({ telephoneNumber }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/${telephoneNumber}/disconnect`);
+      const result = await client.post(`/v1/inventory/numbers/${telephoneNumber}/disconnect`);
       return formatResponse(result);
     }
   );
 
-  // 7. inv_set_pin — PUT /api/v1/inventory/numbers/{telephoneNumber}/pin
+  // 7. inv_set_pin — PUT /v1/inventory/numbers/{telephoneNumber}/pin
   server.tool(
     "inv_set_pin",
     "Use this tool when you need to set or update the PIN (and related security details) on an inventory telephone number.",
@@ -134,12 +134,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("Passthrough object containing the PIN details to apply to the number."),
     },
     async ({ telephoneNumber, body }) => {
-      const result = await client.put(`/api/v1/inventory/numbers/${telephoneNumber}/pin`, body);
+      const result = await client.put(`/v1/inventory/numbers/${telephoneNumber}/pin`, body);
       return formatResponse(result);
     }
   );
 
-  // 8. inv_set_quarantine — PATCH /api/v1/inventory/numbers/{telephoneNumber}/quarantine
+  // 8. inv_set_quarantine — PATCH /v1/inventory/numbers/{telephoneNumber}/quarantine
   server.tool(
     "inv_set_quarantine",
     "Use this tool when you need to place a telephone number into quarantine, temporarily holding it out of the available pool for a SPID.",
@@ -157,12 +157,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("Passthrough object containing the quarantine details to apply to the number."),
     },
     async ({ telephoneNumber, spid, body }) => {
-      const result = await client.patch(`/api/v1/inventory/numbers/${telephoneNumber}/quarantine`, body, { spid });
+      const result = await client.patch(`/v1/inventory/numbers/${telephoneNumber}/quarantine`, body, { spid });
       return formatResponse(result);
     }
   );
 
-  // 9. inv_clear_quarantine — DELETE /api/v1/inventory/numbers/{telephoneNumber}/quarantine
+  // 9. inv_clear_quarantine — DELETE /v1/inventory/numbers/{telephoneNumber}/quarantine
   server.tool(
     "inv_clear_quarantine",
     "Use this tool when you need to remove a telephone number from quarantine, returning it from the quarantined state for a SPID.",
@@ -181,14 +181,14 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .optional(),
     },
     async ({ telephoneNumber, spid, reason }) => {
-      const result = await client.delete(`/api/v1/inventory/numbers/${telephoneNumber}/quarantine`, { spid, reason });
+      const result = await client.delete(`/v1/inventory/numbers/${telephoneNumber}/quarantine`, { spid, reason });
       return formatResponse(result);
     }
   );
 
   // ─── By ID variants ───────────────────────────────────────────────────────
 
-  // 9. inv_reserve_by_id — POST /api/v1/inventory/numbers/by-id/{id}/reserve
+  // 9. inv_reserve_by_id — POST /v1/inventory/numbers/by-id/{id}/reserve
   server.tool(
     "inv_reserve_by_id",
     "Use this tool when you need to reserve an inventory number by its internal record ID rather than the telephone number itself.",
@@ -202,12 +202,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .optional(),
     },
     async ({ id, body }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/by-id/${id}/reserve`, body);
+      const result = await client.post(`/v1/inventory/numbers/by-id/${id}/reserve`, body);
       return formatResponse(result);
     }
   );
 
-  // 10. inv_release_by_id — POST /api/v1/inventory/numbers/by-id/{id}/release
+  // 10. inv_release_by_id — POST /v1/inventory/numbers/by-id/{id}/release
   server.tool(
     "inv_release_by_id",
     "Use this tool when you need to release an inventory number back to the available pool using its internal record ID.",
@@ -217,12 +217,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("The internal inventory record ID of the number to release."),
     },
     async ({ id }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/by-id/${id}/release`);
+      const result = await client.post(`/v1/inventory/numbers/by-id/${id}/release`);
       return formatResponse(result);
     }
   );
 
-  // inv_disconnect_by_id — POST /api/v1/inventory/numbers/by-id/{id}/disconnect
+  // inv_disconnect_by_id — POST /v1/inventory/numbers/by-id/{id}/disconnect
   server.tool(
     "inv_disconnect_by_id",
     "Use this tool when you need to disconnect an inventory number using its internal record ID instead of the telephone number.",
@@ -232,12 +232,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("The internal inventory record ID of the number to disconnect."),
     },
     async ({ id }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/by-id/${id}/disconnect`);
+      const result = await client.post(`/v1/inventory/numbers/by-id/${id}/disconnect`);
       return formatResponse(result);
     }
   );
 
-  // 11. inv_assign_by_id — POST /api/v1/inventory/numbers/by-id/{id}/assign
+  // 11. inv_assign_by_id — POST /v1/inventory/numbers/by-id/{id}/assign
   server.tool(
     "inv_assign_by_id",
     "Use this tool when you need to assign an inventory number to a subscriber using the number's internal record ID instead of the telephone number.",
@@ -250,12 +250,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("Passthrough metadata object containing assignment details (e.g., subscriber information)."),
     },
     async ({ id, body }) => {
-      const result = await client.post(`/api/v1/inventory/numbers/by-id/${id}/assign`, body);
+      const result = await client.post(`/v1/inventory/numbers/by-id/${id}/assign`, body);
       return formatResponse(result);
     }
   );
 
-  // 12. inv_update_metadata_by_id — PUT /api/v1/inventory/numbers/by-id/{id}/metadata
+  // 12. inv_update_metadata_by_id — PUT /v1/inventory/numbers/by-id/{id}/metadata
   server.tool(
     "inv_update_metadata_by_id",
     "Use this tool when you need to update metadata on an inventory number record using its internal record ID.",
@@ -268,14 +268,14 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("Passthrough metadata object containing the updated metadata fields and values."),
     },
     async ({ id, body }) => {
-      const result = await client.put(`/api/v1/inventory/numbers/by-id/${id}/metadata`, body);
+      const result = await client.put(`/v1/inventory/numbers/by-id/${id}/metadata`, body);
       return formatResponse(result);
     }
   );
 
   // ─── Summary ──────────────────────────────────────────────────────────────
 
-  // 13. inv_get_summary — GET /api/v1/inventory/summary
+  // 13. inv_get_summary — GET /v1/inventory/summary
   server.tool(
     "inv_get_summary",
     "Use this tool when you need a high-level summary of inventory counts and statuses (available, reserved, assigned, etc.) for a given SPID.",
@@ -287,14 +287,14 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ spid }) => {
-      const result = await client.get("/api/v1/inventory/summary", { spid });
+      const result = await client.get("/v1/inventory/summary", { spid });
       return formatResponse(result);
     }
   );
 
   // ─── Query ────────────────────────────────────────────────────────────────
 
-  // 14. inv_query — POST /api/v1/inventory/query
+  // 14. inv_query — POST /v1/inventory/query
   server.tool(
     "inv_query",
     "Use this tool when you need to search and filter inventory numbers using a query expression, with support for pagination and sorting.",
@@ -340,12 +340,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
       if (sortDirection !== undefined) body.sortDirection = sortDirection;
       if (spids !== undefined) body.spids = spids;
       if (fields !== undefined) body.fields = fields;
-      const result = await client.post("/api/v1/inventory/query", body);
+      const result = await client.post("/v1/inventory/query", body);
       return formatResponse(result);
     }
   );
 
-  // 15. inv_validate_query — POST /api/v1/inventory/query/validate
+  // 15. inv_validate_query — POST /v1/inventory/query/validate
   server.tool(
     "inv_validate_query",
     "Use this tool when you need to validate an inventory query expression before executing it, to check for syntax errors without running a full search.",
@@ -356,12 +356,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ body }) => {
-      const result = await client.post("/api/v1/inventory/query/validate", body);
+      const result = await client.post("/v1/inventory/query/validate", body);
       return formatResponse(result);
     }
   );
 
-  // 16. inv_export — POST /api/v1/inventory/query/export
+  // 16. inv_export — POST /v1/inventory/query/export
   server.tool(
     "inv_export",
     "Use this tool when you need to export inventory records matching a query to a CSV file for bulk download or reporting purposes.",
@@ -394,12 +394,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
       if (sortBy !== undefined) body.sortBy = sortBy;
       if (sortDirection !== undefined) body.sortDirection = sortDirection;
       if (fields !== undefined) body.fields = fields;
-      const result = await client.post("/api/v1/inventory/query/export", body);
+      const result = await client.post("/v1/inventory/query/export", body);
       return formatResponse(result);
     }
   );
 
-  // 17. inv_aggregate — POST /api/v1/inventory/aggregate
+  // 17. inv_aggregate — POST /v1/inventory/aggregate
   server.tool(
     "inv_aggregate",
     "Use this tool when you need to aggregate inventory data by one or more fields to get counts or grouped statistics across the inventory.",
@@ -434,26 +434,26 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
       if (groupBy !== undefined) body.groupBy = groupBy;
       if (limit !== undefined) body.limit = limit;
       if (orderBy !== undefined) body.orderBy = orderBy;
-      const result = await client.post("/api/v1/inventory/aggregate", body);
+      const result = await client.post("/v1/inventory/aggregate", body);
       return formatResponse(result);
     }
   );
 
   // ─── Map ──────────────────────────────────────────────────────────────────
 
-  // 18. inv_get_map_states — GET /api/v1/inventory/map/states
+  // 18. inv_get_map_states — GET /v1/inventory/map/states
   server.tool(
     "inv_get_map_states",
     "Use this tool when you need to retrieve the list of US states available for inventory map filtering.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/inventory/map/states");
+      const result = await client.get("/v1/inventory/map/states");
       return formatResponse(result);
     }
   );
 
-  // 19. inv_get_map_latas — GET /api/v1/inventory/map/latas
+  // 19. inv_get_map_latas — GET /v1/inventory/map/latas
   server.tool(
     "inv_get_map_latas",
     "Use this tool when you need to retrieve available LATAs for inventory map filtering, optionally scoped to a specific state.",
@@ -465,12 +465,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ state }) => {
-      const result = await client.get("/api/v1/inventory/map/latas", { state });
+      const result = await client.get("/v1/inventory/map/latas", { state });
       return formatResponse(result);
     }
   );
 
-  // 20. inv_get_map_rate_centers — GET /api/v1/inventory/map/rate-centers
+  // 20. inv_get_map_rate_centers — GET /v1/inventory/map/rate-centers
   server.tool(
     "inv_get_map_rate_centers",
     "Use this tool when you need to retrieve available rate centers for inventory map filtering, optionally scoped to a state and/or LATA.",
@@ -487,12 +487,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ state, lata }) => {
-      const result = await client.get("/api/v1/inventory/map/rate-centers", { state, lata });
+      const result = await client.get("/v1/inventory/map/rate-centers", { state, lata });
       return formatResponse(result);
     }
   );
 
-  // 21. inv_get_map_data — POST /api/v1/inventory/map/data
+  // 21. inv_get_map_data — POST /v1/inventory/map/data
   server.tool(
     "inv_get_map_data",
     "Use this tool when you need to retrieve inventory availability map data grouped by a geographic region type, such as states, LATAs, rate centers, ZIP codes, or NPA-NXX.",
@@ -563,14 +563,14 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
       if (maxAvailabilityPercentage !== undefined) body.maxAvailabilityPercentage = maxAvailabilityPercentage;
       if (minAvailableCount !== undefined) body.minAvailableCount = minAvailableCount;
       if (includeEmpty !== undefined) body.includeEmpty = includeEmpty;
-      const result = await client.post("/api/v1/inventory/map/data", body);
+      const result = await client.post("/v1/inventory/map/data", body);
       return formatResponse(result);
     }
   );
 
   // ─── Audit ────────────────────────────────────────────────────────────────
 
-  // 22. inv_start_audit — POST /api/v1/inventory/audit/start
+  // 22. inv_start_audit — POST /v1/inventory/audit/start
   server.tool(
     "inv_start_audit",
     "Use this tool when you need to start an inventory audit for a SPID to reconcile inventory records against the authoritative source.",
@@ -602,12 +602,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
       if (purgeInventoryFirst !== undefined) body.purgeInventoryFirst = purgeInventoryFirst;
       if (includeCnam !== undefined) body.includeCnam = includeCnam;
       if (autoCommit !== undefined) body.autoCommit = autoCommit;
-      const result = await client.post("/api/v1/inventory/audit/start", body);
+      const result = await client.post("/v1/inventory/audit/start", body);
       return formatResponse(result);
     }
   );
 
-  // 23. inv_get_audit_status — GET /api/v1/inventory/audit/{auditJobId}
+  // 23. inv_get_audit_status — GET /v1/inventory/audit/{auditJobId}
   server.tool(
     "inv_get_audit_status",
     "Use this tool when you need to check the current status and progress of a running or completed inventory audit job.",
@@ -618,12 +618,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ auditJobId }) => {
-      const result = await client.get(`/api/v1/inventory/audit/${auditJobId}`);
+      const result = await client.get(`/v1/inventory/audit/${auditJobId}`);
       return formatResponse(result);
     }
   );
 
-  // 24. inv_cancel_audit — DELETE /api/v1/inventory/audit/{auditJobId}
+  // 24. inv_cancel_audit — DELETE /v1/inventory/audit/{auditJobId}
   server.tool(
     "inv_cancel_audit",
     "Use this tool when you need to cancel an in-progress inventory audit job before it completes.",
@@ -633,12 +633,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("The unique identifier of the audit job to cancel."),
     },
     async ({ auditJobId }) => {
-      const result = await client.delete(`/api/v1/inventory/audit/${auditJobId}`);
+      const result = await client.delete(`/v1/inventory/audit/${auditJobId}`);
       return formatResponse(result);
     }
   );
 
-  // 25. inv_get_audit_diff — GET /api/v1/inventory/audit/{auditJobId}/diff
+  // 25. inv_get_audit_diff — GET /v1/inventory/audit/{auditJobId}/diff
   server.tool(
     "inv_get_audit_diff",
     "Use this tool when you need to retrieve a summary of the differences found between the current inventory and the authoritative source after an audit completes.",
@@ -649,12 +649,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ auditJobId }) => {
-      const result = await client.get(`/api/v1/inventory/audit/${auditJobId}/diff`);
+      const result = await client.get(`/v1/inventory/audit/${auditJobId}/diff`);
       return formatResponse(result);
     }
   );
 
-  // 26. inv_download_audit_diff — GET /api/v1/inventory/audit/{auditJobId}/diff/download
+  // 26. inv_download_audit_diff — GET /v1/inventory/audit/{auditJobId}/diff/download
   server.tool(
     "inv_download_audit_diff",
     "Use this tool when you need to download the full audit diff report file for a completed audit job.",
@@ -665,12 +665,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ auditJobId }) => {
-      const result = await client.get(`/api/v1/inventory/audit/${auditJobId}/diff/download`);
+      const result = await client.get(`/v1/inventory/audit/${auditJobId}/diff/download`);
       return formatResponse(result);
     }
   );
 
-  // 27. inv_commit_audit — POST /api/v1/inventory/audit/{auditJobId}/commit
+  // 27. inv_commit_audit — POST /v1/inventory/audit/{auditJobId}/commit
   server.tool(
     "inv_commit_audit",
     "Use this tool when you need to commit a dry-run audit, applying the discovered differences to update the live inventory records.",
@@ -680,12 +680,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("The unique identifier of the dry-run audit job to commit."),
     },
     async ({ auditJobId }) => {
-      const result = await client.post(`/api/v1/inventory/audit/${auditJobId}/commit`);
+      const result = await client.post(`/v1/inventory/audit/${auditJobId}/commit`);
       return formatResponse(result);
     }
   );
 
-  // 28. inv_reject_audit — POST /api/v1/inventory/audit/{auditJobId}/reject
+  // 28. inv_reject_audit — POST /v1/inventory/audit/{auditJobId}/reject
   server.tool(
     "inv_reject_audit",
     "Use this tool when you need to reject a dry-run audit, discarding the discovered differences without updating inventory.",
@@ -695,12 +695,12 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
         .describe("The unique identifier of the dry-run audit job to reject."),
     },
     async ({ auditJobId }) => {
-      const result = await client.post(`/api/v1/inventory/audit/${auditJobId}/reject`);
+      const result = await client.post(`/v1/inventory/audit/${auditJobId}/reject`);
       return formatResponse(result);
     }
   );
 
-  // 29. inv_get_audit_history — GET /api/v1/inventory/audit/history
+  // 29. inv_get_audit_history — GET /v1/inventory/audit/history
   server.tool(
     "inv_get_audit_history",
     "Use this tool when you need to retrieve the history of past audit jobs for a given SPID.",
@@ -717,14 +717,14 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ spid, limit }) => {
-      const result = await client.get("/api/v1/inventory/audit/history", { spid, limit });
+      const result = await client.get("/v1/inventory/audit/history", { spid, limit });
       return formatResponse(result);
     }
   );
 
   // ─── Reports ──────────────────────────────────────────────────────────────
 
-  // 30. inv_get_nruf_report — GET /api/v1/inventory/reports/nruf
+  // 30. inv_get_nruf_report — GET /v1/inventory/reports/nruf
   server.tool(
     "inv_get_nruf_report",
     "Use this tool when you need to generate a Number Resource Utilization/Forecast (NRUF) report for a given SPID to support FCC reporting requirements.",
@@ -736,7 +736,7 @@ export function registerInventoryTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ spid }) => {
-      const result = await client.get("/api/v1/inventory/reports/nruf", { spid });
+      const result = await client.get("/v1/inventory/reports/nruf", { spid });
       return formatResponse(result);
     }
   );

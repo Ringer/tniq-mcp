@@ -9,7 +9,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Overview
   // ---------------------------------------------------------------------------
 
-  // 1. msg_get_overview — GET /api/v1/messaging/overview
+  // 1. msg_get_overview — GET /v1/messaging/overview
   server.tool(
     "msg_get_overview",
     "Use this tool when you need a high-level summary of the messaging account, including brand counts, campaign counts, and overall 10DLC registration status.",
@@ -21,7 +21,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const result = await client.get("/api/v1/messaging/overview", { customerId });
+      const result = await client.get("/v1/messaging/overview", { customerId });
       return formatResponse(result);
     }
   );
@@ -30,7 +30,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Brands
   // ---------------------------------------------------------------------------
 
-  // 2. msg_list_brands — GET /api/v1/messaging/brands
+  // 2. msg_list_brands — GET /v1/messaging/brands
   server.tool(
     "msg_list_brands",
     "Use this tool when you need to list all 10DLC brands registered in the account, with optional pagination and customer scoping.",
@@ -52,12 +52,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ page, size, customerId }) => {
-      const result = await client.get("/api/v1/messaging/brands", { page, size, customerId });
+      const result = await client.get("/v1/messaging/brands", { page, size, customerId });
       return formatResponse(result);
     }
   );
 
-  // 3. msg_get_brand — GET /api/v1/messaging/brands/{brandId}
+  // 3. msg_get_brand — GET /v1/messaging/brands/{brandId}
   server.tool(
     "msg_get_brand",
     "Use this tool when you need to retrieve the full details of a specific 10DLC brand by its ID.",
@@ -72,12 +72,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ brandId, customerId }) => {
-      const result = await client.get(`/api/v1/messaging/brands/${brandId}`, { customerId });
+      const result = await client.get(`/v1/messaging/brands/${brandId}`, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 4. msg_create_brand — POST /api/v1/messaging/brands
+  // 4. msg_create_brand — POST /v1/messaging/brands
   server.tool(
     "msg_create_brand",
     "Use this tool when you need to register a new 10DLC brand with TCR, providing the business entity details required for campaign messaging.",
@@ -167,15 +167,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ customerId, ...body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/brands?customerId=${encodeURIComponent(customerId)}`
-          : "/api/v1/messaging/brands",
+          ? `/v1/messaging/brands?customerId=${encodeURIComponent(customerId)}`
+          : "/v1/messaging/brands",
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 5. msg_update_brand — PUT /api/v1/messaging/brands/{brandId}
+  // 5. msg_update_brand — PUT /v1/messaging/brands/{brandId}
   server.tool(
     "msg_update_brand",
     "Use this tool when you need to update the details of an existing 10DLC brand registration.",
@@ -268,15 +268,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ brandId, customerId, ...body }) => {
       const result = await client.put(
         customerId
-          ? `/api/v1/messaging/brands/${brandId}?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/brands/${brandId}`,
+          ? `/v1/messaging/brands/${brandId}?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/brands/${brandId}`,
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 6. msg_delete_brand — DELETE /api/v1/messaging/brands/{brandId}
+  // 6. msg_delete_brand — DELETE /v1/messaging/brands/{brandId}
   server.tool(
     "msg_delete_brand",
     "Use this tool when you need to delete a 10DLC brand registration. Only use this when the brand is no longer needed and has no active campaigns.",
@@ -290,12 +290,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
         .optional(),
     },
     async ({ brandId, customerId }) => {
-      const result = await client.delete(`/api/v1/messaging/brands/${brandId}`, { customerId });
+      const result = await client.delete(`/v1/messaging/brands/${brandId}`, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 7. msg_link_brand — POST /api/v1/messaging/brands/link
+  // 7. msg_link_brand — POST /v1/messaging/brands/link
   server.tool(
     "msg_link_brand",
     "Use this tool when you need to link an existing TCR brand (already registered at The Campaign Registry) to this account by its TCR brand ID.",
@@ -311,15 +311,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ customerId, tcrBrandId }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/brands/link?customerId=${encodeURIComponent(customerId)}`
-          : "/api/v1/messaging/brands/link",
+          ? `/v1/messaging/brands/link?customerId=${encodeURIComponent(customerId)}`
+          : "/v1/messaging/brands/link",
         { tcrBrandId }
       );
       return formatResponse(result);
     }
   );
 
-  // 8. msg_lookup_brand — GET /api/v1/messaging/brands/lookup/{tcrBrandId}
+  // 8. msg_lookup_brand — GET /v1/messaging/brands/lookup/{tcrBrandId}
   server.tool(
     "msg_lookup_brand",
     "Use this tool when you need to look up brand details directly from TCR using a TCR brand ID, without requiring the brand to be registered in this account.",
@@ -330,7 +330,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ tcrBrandId }) => {
-      const result = await client.get(`/api/v1/messaging/brands/lookup/${tcrBrandId}`);
+      const result = await client.get(`/v1/messaging/brands/lookup/${tcrBrandId}`);
       return formatResponse(result);
     }
   );
@@ -339,7 +339,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Campaigns
   // ---------------------------------------------------------------------------
 
-  // 9. msg_list_campaigns — GET /api/v1/messaging/campaigns
+  // 9. msg_list_campaigns — GET /v1/messaging/campaigns
   server.tool(
     "msg_list_campaigns",
     "Use this tool when you need to list all 10DLC campaigns, optionally filtered by brand and paginated.",
@@ -365,12 +365,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ page, size, brandId, customerId }) => {
-      const result = await client.get("/api/v1/messaging/campaigns", { page, size, brandId, customerId });
+      const result = await client.get("/v1/messaging/campaigns", { page, size, brandId, customerId });
       return formatResponse(result);
     }
   );
 
-  // 10. msg_get_campaign — GET /api/v1/messaging/campaigns/{campaignId}
+  // 10. msg_get_campaign — GET /v1/messaging/campaigns/{campaignId}
   server.tool(
     "msg_get_campaign",
     "Use this tool when you need to retrieve the full details of a specific 10DLC campaign by its ID.",
@@ -385,12 +385,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ campaignId, customerId }) => {
-      const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}`, { customerId });
+      const result = await client.get(`/v1/messaging/campaigns/${campaignId}`, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 11. msg_create_campaign — POST /api/v1/messaging/campaigns
+  // 11. msg_create_campaign — POST /v1/messaging/campaigns
   server.tool(
     "msg_create_campaign",
     "Use this tool when you need to register a new 10DLC messaging campaign with TCR, specifying the brand, use case, message content, and compliance details.",
@@ -498,15 +498,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ customerId, ...body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/campaigns?customerId=${encodeURIComponent(customerId)}`
-          : "/api/v1/messaging/campaigns",
+          ? `/v1/messaging/campaigns?customerId=${encodeURIComponent(customerId)}`
+          : "/v1/messaging/campaigns",
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 12. msg_update_campaign — PUT /api/v1/messaging/campaigns/{campaignId}
+  // 12. msg_update_campaign — PUT /v1/messaging/campaigns/{campaignId}
   server.tool(
     "msg_update_campaign",
     "Use this tool when you need to update the details of an existing 10DLC campaign registration.",
@@ -617,15 +617,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ campaignId, customerId, ...body }) => {
       const result = await client.put(
         customerId
-          ? `/api/v1/messaging/campaigns/${campaignId}?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}`,
+          ? `/v1/messaging/campaigns/${campaignId}?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/campaigns/${campaignId}`,
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 13. msg_resubmit_campaign — PUT /api/v1/messaging/campaigns/{campaignId}/resubmit
+  // 13. msg_resubmit_campaign — PUT /v1/messaging/campaigns/{campaignId}/resubmit
   server.tool(
     "msg_resubmit_campaign",
     "Use this tool when you need to resubmit a previously rejected or failed 10DLC campaign to TCR for re-review.",
@@ -641,15 +641,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ campaignId, customerId }) => {
       const result = await client.put(
         customerId
-          ? `/api/v1/messaging/campaigns/${campaignId}/resubmit?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}/resubmit`,
+          ? `/v1/messaging/campaigns/${campaignId}/resubmit?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/campaigns/${campaignId}/resubmit`,
         {}
       );
       return formatResponse(result);
     }
   );
 
-  // 14. msg_link_campaign — POST /api/v1/messaging/campaigns/link
+  // 14. msg_link_campaign — POST /v1/messaging/campaigns/link
   server.tool(
     "msg_link_campaign",
     "Use this tool when you need to link an existing TCR campaign (already registered at The Campaign Registry) to this account by its TCR campaign ID.",
@@ -665,15 +665,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ customerId, tcrCampaignId }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/campaigns/link?customerId=${encodeURIComponent(customerId)}`
-          : "/api/v1/messaging/campaigns/link",
+          ? `/v1/messaging/campaigns/link?customerId=${encodeURIComponent(customerId)}`
+          : "/v1/messaging/campaigns/link",
         { tcrCampaignId }
       );
       return formatResponse(result);
     }
   );
 
-  // 15. msg_lookup_campaign — GET /api/v1/messaging/campaigns/lookup/{tcrCampaignId}
+  // 15. msg_lookup_campaign — GET /v1/messaging/campaigns/lookup/{tcrCampaignId}
   server.tool(
     "msg_lookup_campaign",
     "Use this tool when you need to look up campaign details directly from TCR using a TCR campaign ID, without requiring the campaign to be registered in this account.",
@@ -684,7 +684,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ tcrCampaignId }) => {
-      const result = await client.get(`/api/v1/messaging/campaigns/lookup/${tcrCampaignId}`);
+      const result = await client.get(`/v1/messaging/campaigns/lookup/${tcrCampaignId}`);
       return formatResponse(result);
     }
   );
@@ -693,7 +693,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Campaign Numbers
   // ---------------------------------------------------------------------------
 
-  // 16. msg_list_campaign_numbers — GET /api/v1/messaging/campaigns/{campaignId}/numbers
+  // 16. msg_list_campaign_numbers — GET /v1/messaging/campaigns/{campaignId}/numbers
   server.tool(
     "msg_list_campaign_numbers",
     "Use this tool when you need to list all phone numbers currently assigned to a specific 10DLC campaign.",
@@ -718,12 +718,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ campaignId, page, size, customerId }) => {
-      const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}/numbers`, { page, size, customerId });
+      const result = await client.get(`/v1/messaging/campaigns/${campaignId}/numbers`, { page, size, customerId });
       return formatResponse(result);
     }
   );
 
-  // 17. msg_assign_numbers — POST /api/v1/messaging/campaigns/{campaignId}/numbers
+  // 17. msg_assign_numbers — POST /v1/messaging/campaigns/{campaignId}/numbers
   server.tool(
     "msg_assign_numbers",
     "Use this tool when you need to assign one or more phone numbers to a 10DLC campaign so they can send messages under that campaign's registration.",
@@ -742,15 +742,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ campaignId, customerId, phoneNumbers }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/campaigns/${campaignId}/numbers?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}/numbers`,
+          ? `/v1/messaging/campaigns/${campaignId}/numbers?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/campaigns/${campaignId}/numbers`,
         { phoneNumbers }
       );
       return formatResponse(result);
     }
   );
 
-  // 18. msg_remove_numbers — DELETE /api/v1/messaging/campaigns/{campaignId}/numbers
+  // 18. msg_remove_numbers — DELETE /v1/messaging/campaigns/{campaignId}/numbers
   server.tool(
     "msg_remove_numbers",
     "Use this tool when you need to remove one or more phone numbers from a 10DLC campaign, unassigning them from that campaign's messaging registration.",
@@ -768,7 +768,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     async ({ campaignId, customerId, phoneNumbers }) => {
       const result = await client.delete(
-        `/api/v1/messaging/campaigns/${campaignId}/numbers`,
+        `/v1/messaging/campaigns/${campaignId}/numbers`,
         { customerId },
         { phoneNumbers }
       );
@@ -780,7 +780,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Campaign CNP
   // ---------------------------------------------------------------------------
 
-  // 19. msg_elect_cnp — POST /api/v1/messaging/campaigns/{campaignId}/cnp
+  // 19. msg_elect_cnp — POST /v1/messaging/campaigns/{campaignId}/cnp
   server.tool(
     "msg_elect_cnp",
     "Use this tool when you need to elect a Connectivity Partner (CNP) for a 10DLC campaign, authorizing them to send messages under this campaign's registration.",
@@ -800,15 +800,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ campaignId, customerId, body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/campaigns/${campaignId}/cnp?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}/cnp`,
+          ? `/v1/messaging/campaigns/${campaignId}/cnp?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/campaigns/${campaignId}/cnp`,
         body ?? {}
       );
       return formatResponse(result);
     }
   );
 
-  // 20. msg_nudge_cnp — POST /api/v1/messaging/campaigns/{campaignId}/nudge
+  // 20. msg_nudge_cnp — POST /v1/messaging/campaigns/{campaignId}/nudge
   server.tool(
     "msg_nudge_cnp",
     "Use this tool when you need to nudge or remind a CNP to accept or action a pending campaign election request.",
@@ -828,8 +828,8 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ campaignId, customerId, body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/campaigns/${campaignId}/nudge?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}/nudge`,
+          ? `/v1/messaging/campaigns/${campaignId}/nudge?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/campaigns/${campaignId}/nudge`,
         body ?? {}
       );
       return formatResponse(result);
@@ -840,7 +840,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Campaign Status
   // ---------------------------------------------------------------------------
 
-  // 21. msg_get_sharing_status — GET /api/v1/messaging/campaigns/{campaignId}/sharing
+  // 21. msg_get_sharing_status — GET /v1/messaging/campaigns/{campaignId}/sharing
   server.tool(
     "msg_get_sharing_status",
     "Use this tool when you need to check the sharing status of a 10DLC campaign, including which CNPs have accepted or rejected the campaign.",
@@ -855,12 +855,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ campaignId, customerId }) => {
-      const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}/sharing`, { customerId });
+      const result = await client.get(`/v1/messaging/campaigns/${campaignId}/sharing`, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 22. msg_get_mno_status — GET /api/v1/messaging/campaigns/{campaignId}/mno-status
+  // 22. msg_get_mno_status — GET /v1/messaging/campaigns/{campaignId}/mno-status
   server.tool(
     "msg_get_mno_status",
     "Use this tool when you need to check the MNO (Mobile Network Operator) vetting and approval status of a 10DLC campaign across carriers such as AT&T, T-Mobile, and Verizon.",
@@ -875,7 +875,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ campaignId, customerId }) => {
-      const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}/mno-status`, { customerId });
+      const result = await client.get(`/v1/messaging/campaigns/${campaignId}/mno-status`, { customerId });
       return formatResponse(result);
     }
   );
@@ -884,7 +884,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // NNIDs
   // ---------------------------------------------------------------------------
 
-  // 23. msg_list_nnids — GET /api/v1/messaging/nnids
+  // 23. msg_list_nnids — GET /v1/messaging/nnids
   server.tool(
     "msg_list_nnids",
     "Use this tool when you need to list all Network Node Identifiers (NNIDs) configured in the account, which are used to associate campaigns with specific carrier network nodes.",
@@ -896,12 +896,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId }) => {
-      const result = await client.get("/api/v1/messaging/nnids", { customerId });
+      const result = await client.get("/v1/messaging/nnids", { customerId });
       return formatResponse(result);
     }
   );
 
-  // 24. msg_get_nnid — GET /api/v1/messaging/nnids/{nnidId}
+  // 24. msg_get_nnid — GET /v1/messaging/nnids/{nnidId}
   server.tool(
     "msg_get_nnid",
     "Use this tool when you need to retrieve the full details of a specific NNID (Network Node Identifier) by its ID.",
@@ -916,12 +916,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ nnidId, customerId }) => {
-      const result = await client.get(`/api/v1/messaging/nnids/${nnidId}`, { customerId });
+      const result = await client.get(`/v1/messaging/nnids/${nnidId}`, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 25. msg_create_nnid — POST /api/v1/messaging/nnids
+  // 25. msg_create_nnid — POST /v1/messaging/nnids
   server.tool(
     "msg_create_nnid",
     "Use this tool when you need to create a new NNID (Network Node Identifier) to associate a carrier network node with messaging campaigns.",
@@ -953,15 +953,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ customerId, ...body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/nnids?customerId=${encodeURIComponent(customerId)}`
-          : "/api/v1/messaging/nnids",
+          ? `/v1/messaging/nnids?customerId=${encodeURIComponent(customerId)}`
+          : "/v1/messaging/nnids",
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 26. msg_update_nnid — PUT /api/v1/messaging/nnids/{nnidId}
+  // 26. msg_update_nnid — PUT /v1/messaging/nnids/{nnidId}
   server.tool(
     "msg_update_nnid",
     "Use this tool when you need to update the details of an existing NNID (Network Node Identifier).",
@@ -996,15 +996,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ nnidId, customerId, ...body }) => {
       const result = await client.put(
         customerId
-          ? `/api/v1/messaging/nnids/${nnidId}?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/nnids/${nnidId}`,
+          ? `/v1/messaging/nnids/${nnidId}?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/nnids/${nnidId}`,
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 27. msg_delete_nnid — DELETE /api/v1/messaging/nnids/{nnidId}
+  // 27. msg_delete_nnid — DELETE /v1/messaging/nnids/{nnidId}
   server.tool(
     "msg_delete_nnid",
     "Use this tool when you need to delete an NNID (Network Node Identifier) that is no longer needed.",
@@ -1018,7 +1018,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
         .optional(),
     },
     async ({ nnidId, customerId }) => {
-      const result = await client.delete(`/api/v1/messaging/nnids/${nnidId}`, { customerId });
+      const result = await client.delete(`/v1/messaging/nnids/${nnidId}`, { customerId });
       return formatResponse(result);
     }
   );
@@ -1027,62 +1027,62 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Enums (reference data)
   // ---------------------------------------------------------------------------
 
-  // 28. msg_list_verticals — GET /api/v1/messaging/enums/verticals
+  // 28. msg_list_verticals — GET /v1/messaging/enums/verticals
   server.tool(
     "msg_list_verticals",
     "Use this tool when you need to retrieve the list of valid industry vertical values accepted by TCR for brand registration.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/enums/verticals");
+      const result = await client.get("/v1/messaging/enums/verticals");
       return formatResponse(result);
     }
   );
 
-  // 29. msg_list_use_cases — GET /api/v1/messaging/enums/use-cases
+  // 29. msg_list_use_cases — GET /v1/messaging/enums/use-cases
   server.tool(
     "msg_list_use_cases",
     "Use this tool when you need to retrieve the list of valid campaign use case values accepted by TCR for campaign registration.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/enums/use-cases");
+      const result = await client.get("/v1/messaging/enums/use-cases");
       return formatResponse(result);
     }
   );
 
-  // 30. msg_list_mnos — GET /api/v1/messaging/enums/mnos
+  // 30. msg_list_mnos — GET /v1/messaging/enums/mnos
   server.tool(
     "msg_list_mnos",
     "Use this tool when you need to retrieve the list of Mobile Network Operators (MNOs) that participate in 10DLC vetting and their identifiers.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/enums/mnos");
+      const result = await client.get("/v1/messaging/enums/mnos");
       return formatResponse(result);
     }
   );
 
-  // 31. msg_list_entity_types — GET /api/v1/messaging/enums/entity-types
+  // 31. msg_list_entity_types — GET /v1/messaging/enums/entity-types
   server.tool(
     "msg_list_entity_types",
     "Use this tool when you need to retrieve the list of valid business entity types accepted by TCR for brand registration (e.g., PRIVATE_PROFIT, NON_PROFIT, GOVERNMENT).",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/enums/entity-types");
+      const result = await client.get("/v1/messaging/enums/entity-types");
       return formatResponse(result);
     }
   );
 
-  // 32. msg_list_cnps — GET /api/v1/messaging/enums/cnps
+  // 32. msg_list_cnps — GET /v1/messaging/enums/cnps
   server.tool(
     "msg_list_cnps",
     "Use this tool when you need to retrieve the list of registered Connectivity Partners (CNPs) available for campaign election.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/enums/cnps");
+      const result = await client.get("/v1/messaging/enums/cnps");
       return formatResponse(result);
     }
   );
@@ -1091,7 +1091,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Event History
   // ---------------------------------------------------------------------------
 
-  // 33. msg_get_brand_events — GET /api/v1/messaging/brands/{brandId}/events
+  // 33. msg_get_brand_events — GET /v1/messaging/brands/{brandId}/events
   server.tool(
     "msg_get_brand_events",
     "Use this tool when you need to retrieve the event history for a specific 10DLC brand, including status changes, TCR submissions, and other lifecycle events.",
@@ -1112,12 +1112,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ brandId, page, size }) => {
-      const result = await client.get(`/api/v1/messaging/brands/${brandId}/events`, { page, size });
+      const result = await client.get(`/v1/messaging/brands/${brandId}/events`, { page, size });
       return formatResponse(result);
     }
   );
 
-  // 34. msg_get_campaign_events — GET /api/v1/messaging/campaigns/{campaignId}/events
+  // 34. msg_get_campaign_events — GET /v1/messaging/campaigns/{campaignId}/events
   server.tool(
     "msg_get_campaign_events",
     "Use this tool when you need to retrieve the event history for a specific 10DLC campaign, including status changes, MNO responses, and other lifecycle events.",
@@ -1138,7 +1138,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ campaignId, page, size }) => {
-      const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}/events`, { page, size });
+      const result = await client.get(`/v1/messaging/campaigns/${campaignId}/events`, { page, size });
       return formatResponse(result);
     }
   );
@@ -1147,43 +1147,43 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // Brand Vetting
   // ---------------------------------------------------------------------------
 
-  // 35. msg_list_vetting_providers — GET /api/v1/messaging/brands/vetting/providers
+  // 35. msg_list_vetting_providers — GET /v1/messaging/brands/vetting/providers
   server.tool(
     "msg_list_vetting_providers",
     "Use this tool when you need to list the external vetting providers (EVPs) available for brand vetting, along with their identifiers and supported vetting classes.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/brands/vetting/providers");
+      const result = await client.get("/v1/messaging/brands/vetting/providers");
       return formatResponse(result);
     }
   );
 
-  // 36. msg_list_identity_appeal_categories — GET /api/v1/messaging/brands/appeal-categories/identity
+  // 36. msg_list_identity_appeal_categories — GET /v1/messaging/brands/appeal-categories/identity
   server.tool(
     "msg_list_identity_appeal_categories",
     "Use this tool when you need to retrieve the list of valid appeal categories that can be used when appealing a brand identity status.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/brands/appeal-categories/identity");
+      const result = await client.get("/v1/messaging/brands/appeal-categories/identity");
       return formatResponse(result);
     }
   );
 
-  // 37. msg_list_vet_appeal_categories — GET /api/v1/messaging/brands/appeal-categories/vet
+  // 37. msg_list_vet_appeal_categories — GET /v1/messaging/brands/appeal-categories/vet
   server.tool(
     "msg_list_vet_appeal_categories",
     "Use this tool when you need to retrieve the list of valid appeal categories that can be used when appealing a brand vetting result.",
     {},
     READ_ONLY_ANNOTATIONS,
     async () => {
-      const result = await client.get("/api/v1/messaging/brands/appeal-categories/vet");
+      const result = await client.get("/v1/messaging/brands/appeal-categories/vet");
       return formatResponse(result);
     }
   );
 
-  // 38. msg_request_vetting — POST /api/v1/messaging/brands/{brandId}/vetting
+  // 38. msg_request_vetting — POST /v1/messaging/brands/{brandId}/vetting
   server.tool(
     "msg_request_vetting",
     "Use this tool when you need to request external vetting for a 10DLC brand from an external vetting provider (EVP), which can improve campaign throughput and approval rates.",
@@ -1209,15 +1209,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ brandId, customerId, ...body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/brands/${brandId}/vetting?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/brands/${brandId}/vetting`,
+          ? `/v1/messaging/brands/${brandId}/vetting?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/brands/${brandId}/vetting`,
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 39. msg_import_vetting — POST /api/v1/messaging/brands/{brandId}/vetting/import
+  // 39. msg_import_vetting — POST /v1/messaging/brands/{brandId}/vetting/import
   server.tool(
     "msg_import_vetting",
     "Use this tool when you need to import an existing external vetting result into a 10DLC brand, when the brand was already vetted by a provider outside this account.",
@@ -1243,15 +1243,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ brandId, customerId, ...body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/brands/${brandId}/vetting/import?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/brands/${brandId}/vetting/import`,
+          ? `/v1/messaging/brands/${brandId}/vetting/import?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/brands/${brandId}/vetting/import`,
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 40. msg_appeal_vetting — POST /api/v1/messaging/brands/{brandId}/vetting/{vettingId}/appeal
+  // 40. msg_appeal_vetting — POST /v1/messaging/brands/{brandId}/vetting/{vettingId}/appeal
   server.tool(
     "msg_appeal_vetting",
     "Use this tool when you need to appeal the result of a specific brand vetting, providing the appeal categories and supporting explanation.",
@@ -1284,15 +1284,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ brandId, vettingId, customerId, ...body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/brands/${brandId}/vetting/${vettingId}/appeal?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/brands/${brandId}/vetting/${vettingId}/appeal`,
+          ? `/v1/messaging/brands/${brandId}/vetting/${vettingId}/appeal?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/brands/${brandId}/vetting/${vettingId}/appeal`,
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 41. msg_appeal_brand — POST /api/v1/messaging/brands/{brandId}/appeal
+  // 41. msg_appeal_brand — POST /v1/messaging/brands/{brandId}/appeal
   server.tool(
     "msg_appeal_brand",
     "Use this tool when you need to appeal a 10DLC brand's identity status (e.g., an UNVERIFIED or self-declared identity result), providing the appeal categories and supporting explanation.",
@@ -1319,15 +1319,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ brandId, customerId, ...body }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/brands/${brandId}/appeal?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/brands/${brandId}/appeal`,
+          ? `/v1/messaging/brands/${brandId}/appeal?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/brands/${brandId}/appeal`,
         body
       );
       return formatResponse(result);
     }
   );
 
-  // 42. msg_revet_brand — PUT /api/v1/messaging/brands/{brandId}/revet
+  // 42. msg_revet_brand — PUT /v1/messaging/brands/{brandId}/revet
   server.tool(
     "msg_revet_brand",
     "Use this tool when you need to trigger a re-vetting of a 10DLC brand, re-running brand identity verification at TCR.",
@@ -1343,8 +1343,8 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ brandId, customerId }) => {
       const result = await client.put(
         customerId
-          ? `/api/v1/messaging/brands/${brandId}/revet?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/brands/${brandId}/revet`
+          ? `/v1/messaging/brands/${brandId}/revet?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/brands/${brandId}/revet`
       );
       return formatResponse(result);
     }
@@ -1354,7 +1354,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
   // CNP Registration & Migration
   // ---------------------------------------------------------------------------
 
-  // 43. msg_brand_cnp_register — POST /api/v1/messaging/brands/{brandId}/cnp-register
+  // 43. msg_brand_cnp_register — POST /v1/messaging/brands/{brandId}/cnp-register
   server.tool(
     "msg_brand_cnp_register",
     "Use this tool when you need to retry the Connectivity Partner (CNP) registration for a 10DLC brand that previously failed to register with a downstream connectivity partner.",
@@ -1370,15 +1370,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ brandId, customerId }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/brands/${brandId}/cnp-register?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/brands/${brandId}/cnp-register`,
+          ? `/v1/messaging/brands/${brandId}/cnp-register?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/brands/${brandId}/cnp-register`,
         {}
       );
       return formatResponse(result);
     }
   );
 
-  // 44. msg_campaign_cnp_register — POST /api/v1/messaging/campaigns/{campaignId}/cnp-register
+  // 44. msg_campaign_cnp_register — POST /v1/messaging/campaigns/{campaignId}/cnp-register
   server.tool(
     "msg_campaign_cnp_register",
     "Use this tool when you need to retry the Connectivity Partner (CNP) registration for a 10DLC campaign that previously failed to register with a downstream connectivity partner.",
@@ -1394,15 +1394,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ campaignId, customerId }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/campaigns/${campaignId}/cnp-register?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}/cnp-register`,
+          ? `/v1/messaging/campaigns/${campaignId}/cnp-register?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/campaigns/${campaignId}/cnp-register`,
         {}
       );
       return formatResponse(result);
     }
   );
 
-  // 45. msg_get_cnp_migration — GET /api/v1/messaging/campaigns/{campaignId}/cnp-migration
+  // 45. msg_get_cnp_migration — GET /v1/messaging/campaigns/{campaignId}/cnp-migration
   server.tool(
     "msg_get_cnp_migration",
     "Use this tool when you need to check the status of a Connectivity Partner (CNP) migration for a 10DLC campaign.",
@@ -1417,12 +1417,12 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     },
     READ_ONLY_ANNOTATIONS,
     async ({ campaignId, customerId }) => {
-      const result = await client.get(`/api/v1/messaging/campaigns/${campaignId}/cnp-migration`, { customerId });
+      const result = await client.get(`/v1/messaging/campaigns/${campaignId}/cnp-migration`, { customerId });
       return formatResponse(result);
     }
   );
 
-  // 46. msg_start_cnp_migration — POST /api/v1/messaging/campaigns/{campaignId}/cnp-migration
+  // 46. msg_start_cnp_migration — POST /v1/messaging/campaigns/{campaignId}/cnp-migration
   server.tool(
     "msg_start_cnp_migration",
     "Use this tool when you need to initiate a Connectivity Partner (CNP) migration for a 10DLC campaign, moving it to a different downstream connectivity partner.",
@@ -1441,15 +1441,15 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ campaignId, customerId, migrationData }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/campaigns/${campaignId}/cnp-migration?customerId=${encodeURIComponent(customerId)}`
-          : `/api/v1/messaging/campaigns/${campaignId}/cnp-migration`,
+          ? `/v1/messaging/campaigns/${campaignId}/cnp-migration?customerId=${encodeURIComponent(customerId)}`
+          : `/v1/messaging/campaigns/${campaignId}/cnp-migration`,
         migrationData
       );
       return formatResponse(result);
     }
   );
 
-  // 47. msg_cancel_cnp_migration — DELETE /api/v1/messaging/campaigns/{campaignId}/cnp-migration
+  // 47. msg_cancel_cnp_migration — DELETE /v1/messaging/campaigns/{campaignId}/cnp-migration
   server.tool(
     "msg_cancel_cnp_migration",
     "Use this tool when you need to cancel an in-progress Connectivity Partner (CNP) migration for a 10DLC campaign.",
@@ -1467,7 +1467,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
         .optional(),
     },
     async ({ campaignId, explanation, customerId }) => {
-      const result = await client.delete(`/api/v1/messaging/campaigns/${campaignId}/cnp-migration`, {
+      const result = await client.delete(`/v1/messaging/campaigns/${campaignId}/cnp-migration`, {
         explanation,
         customerId,
       });
@@ -1475,7 +1475,7 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     }
   );
 
-  // 48. msg_cnp_backfill — POST /api/v1/messaging/cnp-backfill
+  // 48. msg_cnp_backfill — POST /v1/messaging/cnp-backfill
   server.tool(
     "msg_cnp_backfill",
     "Use this tool when you need to backfill Connectivity Partner (CNP) registrations across existing brands and campaigns, registering them with a downstream connectivity partner in bulk.",
@@ -1488,8 +1488,8 @@ export function registerMessagingTools(server: McpServer, client: TniqClient): v
     async ({ customerId }) => {
       const result = await client.post(
         customerId
-          ? `/api/v1/messaging/cnp-backfill?customerId=${encodeURIComponent(customerId)}`
-          : "/api/v1/messaging/cnp-backfill",
+          ? `/v1/messaging/cnp-backfill?customerId=${encodeURIComponent(customerId)}`
+          : "/v1/messaging/cnp-backfill",
         {}
       );
       return formatResponse(result);

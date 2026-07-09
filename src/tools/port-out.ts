@@ -5,7 +5,7 @@ import { formatResponse, errorResult } from "../utils/formatting.js";
 import { READ_ONLY_ANNOTATIONS } from "../annotations.js";
 
 export function registerPortOutTools(server: McpServer, client: TniqClient): void {
-  // 1. port_out_list_projects — GET /api/v1/port-out-releases/projects
+  // 1. port_out_list_projects — GET /v1/port-out-releases/projects
   server.tool(
     "port_out_list_projects",
     "Use this tool when you need to list all port-out release projects for a customer.",
@@ -26,7 +26,7 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     },
     READ_ONLY_ANNOTATIONS,
     async ({ customerId, page, size }) => {
-      const result = await client.get("/api/v1/port-out-releases/projects", {
+      const result = await client.get("/v1/port-out-releases/projects", {
         customerId,
         page,
         size,
@@ -35,7 +35,7 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     }
   );
 
-  // 2. port_out_get_project — GET /api/v1/port-out-releases/projects/{projectId}
+  // 2. port_out_get_project — GET /v1/port-out-releases/projects/{projectId}
   server.tool(
     "port_out_get_project",
     "Use this tool when you need to retrieve the details of a specific port-out release project by its ID.",
@@ -50,14 +50,14 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     READ_ONLY_ANNOTATIONS,
     async ({ projectId, customerId }) => {
       const result = await client.get(
-        `/api/v1/port-out-releases/projects/${projectId}`,
+        `/v1/port-out-releases/projects/${projectId}`,
         { customerId }
       );
       return formatResponse(result);
     }
   );
 
-  // 3. port_out_create_project — POST /api/v1/port-out-releases/projects
+  // 3. port_out_create_project — POST /v1/port-out-releases/projects
   server.tool(
     "port_out_create_project",
     "Use this tool when you need to create a new port-out release project to release telephone numbers to a gaining carrier.",
@@ -128,12 +128,12 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     async ({ customerId, sourceSpid, gainingSpid, name, tns }) => {
       const body: Record<string, unknown> = { customerId, sourceSpid, gainingSpid, tns };
       if (name !== undefined) body.name = name;
-      const result = await client.post("/api/v1/port-out-releases/projects", body);
+      const result = await client.post("/v1/port-out-releases/projects", body);
       return formatResponse(result);
     }
   );
 
-  // 4. port_out_get_details — GET /api/v1/port-out-releases/projects/{projectId}/details
+  // 4. port_out_get_details — GET /v1/port-out-releases/projects/{projectId}/details
   server.tool(
     "port_out_get_details",
     "Use this tool when you need to retrieve the telephone numbers and their details within a specific port-out release project.",
@@ -158,14 +158,14 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     READ_ONLY_ANNOTATIONS,
     async ({ projectId, customerId, page, size }) => {
       const result = await client.get(
-        `/api/v1/port-out-releases/projects/${projectId}/details`,
+        `/v1/port-out-releases/projects/${projectId}/details`,
         { customerId, page, size }
       );
       return formatResponse(result);
     }
   );
 
-  // 5. port_out_update_tn — PUT /api/v1/port-out-releases/projects/{projectId}/details/{tn}
+  // 5. port_out_update_tn — PUT /v1/port-out-releases/projects/{projectId}/details/{tn}
   server.tool(
     "port_out_update_tn",
     "Use this tool when you need to update the subscriber details for a specific telephone number within a port-out release project.",
@@ -186,14 +186,14 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     async ({ projectId, tn, customerId, details }) => {
       const params = new URLSearchParams({ customerId });
       const result = await client.put(
-        `/api/v1/port-out-releases/projects/${projectId}/details/${tn}?${params}`,
+        `/v1/port-out-releases/projects/${projectId}/details/${tn}?${params}`,
         details
       );
       return formatResponse(result);
     }
   );
 
-  // 6. port_out_submit — POST /api/v1/port-out-releases/projects/{projectId}/submit
+  // 6. port_out_submit — POST /v1/port-out-releases/projects/{projectId}/submit
   server.tool(
     "port_out_submit",
     "Use this tool when you need to submit a port-out release project to NPAC, initiating the release of telephone numbers to the gaining carrier on the specified due date.",
@@ -211,13 +211,13 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     async ({ projectId, customerId, dueDate }) => {
       const params = new URLSearchParams({ customerId, dueDate });
       const result = await client.post(
-        `/api/v1/port-out-releases/projects/${projectId}/submit?${params}`
+        `/v1/port-out-releases/projects/${projectId}/submit?${params}`
       );
       return formatResponse(result);
     }
   );
 
-  // 7. port_out_retry — POST /api/v1/port-out-releases/projects/{projectId}/retry
+  // 7. port_out_retry — POST /v1/port-out-releases/projects/{projectId}/retry
   server.tool(
     "port_out_retry",
     "Use this tool when you need to retry previously failed telephone numbers in a port-out release project, resubmitting them to NPAC on the specified due date.",
@@ -235,13 +235,13 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     async ({ projectId, customerId, dueDate }) => {
       const params = new URLSearchParams({ customerId, dueDate });
       const result = await client.post(
-        `/api/v1/port-out-releases/projects/${projectId}/retry?${params}`
+        `/v1/port-out-releases/projects/${projectId}/retry?${params}`
       );
       return formatResponse(result);
     }
   );
 
-  // 8. port_out_lookup — POST /api/v1/port-out-releases/lookup
+  // 8. port_out_lookup — POST /v1/port-out-releases/lookup
   server.tool(
     "port_out_lookup",
     "Use this tool when you need to look up the port-out release status and eligibility of one or more telephone numbers before creating or submitting a port-out release project.",
@@ -256,7 +256,7 @@ export function registerPortOutTools(server: McpServer, client: TniqClient): voi
     async ({ customerId, tns }) => {
       const params = new URLSearchParams({ customerId });
       const result = await client.post(
-        `/api/v1/port-out-releases/lookup?${params}`,
+        `/v1/port-out-releases/lookup?${params}`,
         { tns }
       );
       return formatResponse(result);
