@@ -38,6 +38,9 @@ if (subcommand === "setup") {
     "./tools/port-protection.js"
   );
   const { registerReportTools } = await import("./tools/reports.js");
+  const { registerReferenceDataTools } = await import(
+    "./tools/reference-data.js"
+  );
   const { registerKnowledge, TNIQ_KNOWLEDGE } = await import(
     "./knowledge.js"
   );
@@ -72,6 +75,7 @@ if (subcommand === "setup") {
   registerCnamTools(server, client);
   registerPortProtectionTools(server, client);
   registerReportTools(server, client);
+  registerReferenceDataTools(server, client);
   registerKnowledge(server);
 
   const transport = new StdioServerTransport();
