@@ -230,4 +230,71 @@ export function registerReferenceDataTools(
       return formatResponse(data);
     }
   );
+
+  // ─── SPID (published NPAC registration identities; list = identity +
+  //     contactCount only, NEVER contact values; detail = contacts for the
+  //     requested SPID only. Credentialed: KYC-vetted, NPAC-rights accounts) ──
+
+  server.tool(
+    "ref_search_spids",
+    "Use when you need to search published NPAC SPID registration identities " +
+      "(credentialed — requires a KYC-vetted account with NPAC rights). " +
+      "Returns identity summaries and a contact count only — never contact " +
+      "values; open a single SPID for its published registration contacts. " +
+      "NPAC registration contacts are distinct from the SPID observed on live " +
+      "Telique/LSMS number data and from your customer SPID " +
+      "entitlement/configuration." +
+      CREDENTIAL_NOTE,
+    {
+      search: z
+        .string()
+        .optional()
+        .describe("Free-text search across SPID and registered customer names."),
+      region: z.string().optional().describe("Filter by NPAC region."),
+      active: activeField,
+      page: pageField,
+      size: sizeField,
+      sort: z
+        .string()
+        .optional()
+        .describe("Sort spec, e.g. 'spid,asc' (default)."),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ search, region, active, page, size, sort }) => {
+      const data = await client.get("/v1/reference-data/spids", {
+        search,
+        region,
+        active,
+        page,
+        size,
+        sort,
+      });
+      return formatResponse(data);
+    }
+  );
+
+  server.tool(
+    "ref_get_spid",
+    "Use when you need the published NPAC registration contacts for one " +
+      "four-character SPID (credentialed — KYC-vetted, NPAC-rights accounts " +
+      "only). Returns published registration contacts for the requested SPID " +
+      "only. These NPAC registration contacts are distinct from the live " +
+      "SPID-on-number seen via Telique/LSMS and from customer SPID entitlement." +
+      CREDENTIAL_NOTE,
+    {
+      spid: z
+        .string()
+        .describe("The four-character SPID to inspect (case-insensitive).")
+        .refine(isValidSpid, {
+          message: "spid must be exactly 4 alphanumeric characters",
+        }),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ spid }) => {
+      const data = await client.get(
+        `/v1/reference-data/spids/${encodeURIComponent(spid.toUpperCase())}`
+      );
+      return formatResponse(data);
+    }
+  );
 }
