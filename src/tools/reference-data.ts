@@ -172,4 +172,62 @@ export function registerReferenceDataTools(
       return formatResponse(data);
     }
   );
+
+  // ─── Resp Org (published Somos Resp Org identities; list = identity
+  //     summaries, detail = full order-processing contacts) ──────────────────
+
+  server.tool(
+    "ref_search_resp_orgs",
+    "Use when you need to search published Somos Resp Org identities by " +
+      "company name or entity ID. Returns identity summaries only; open a " +
+      "single Resp Org ID for its complete order-processing contact detail." +
+      CREDENTIAL_NOTE,
+    {
+      search: z
+        .string()
+        .optional()
+        .describe("Free-text search across Resp Org ID and company name."),
+      entityId: z
+        .string()
+        .optional()
+        .describe("Filter by Somos entity ID."),
+      active: activeField,
+      page: pageField,
+      size: sizeField,
+      sort: z
+        .string()
+        .optional()
+        .describe("Sort spec, e.g. 'respOrgId,asc' (default)."),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ search, entityId, active, page, size, sort }) => {
+      const data = await client.get("/v1/reference-data/resp-orgs", {
+        search,
+        entityId,
+        active,
+        page,
+        size,
+        sort,
+      });
+      return formatResponse(data);
+    }
+  );
+
+  server.tool(
+    "ref_get_resp_org",
+    "Use when you need the complete published Somos Resp Org record for one " +
+      "Resp Org ID, including company address, primary and change contacts, " +
+      "and notes." +
+      CREDENTIAL_NOTE,
+    {
+      respOrgId: z.string().describe("The Resp Org ID to inspect."),
+    },
+    READ_ONLY_ANNOTATIONS,
+    async ({ respOrgId }) => {
+      const data = await client.get(
+        `/v1/reference-data/resp-orgs/${encodeURIComponent(respOrgId)}`
+      );
+      return formatResponse(data);
+    }
+  );
 }
