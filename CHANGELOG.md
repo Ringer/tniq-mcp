@@ -3,6 +3,28 @@
 All notable changes to `tniq-mcp` are documented here. This project adheres to
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.0]
+
+### Added
+- **Reference-data tools (`ref_*`)** — nine credentialed, read-only directory
+  lookups over the TNIQ Customer API (issue #6):
+  - CIC (NANPA Feature Group D): `ref_search_cics`, `ref_get_cic`, and
+    `ref_resolve_cics` (bounded, non-mutating resolve of up to 100 CICs).
+  - NNID (published NetNumber GCMR directory): `ref_search_nnids`,
+    `ref_get_nnid` — the global reference directory, distinct from the
+    account-configured messaging NNIDs managed by the `msg_*` tools.
+  - Resp Org (published Somos identities): `ref_search_resp_orgs`,
+    `ref_get_resp_org` — detail returns the full published order-processing
+    contacts.
+  - SPID (published NPAC registration): `ref_search_spids`, `ref_get_spid`.
+    Search returns identity summaries and a contact count only; detail returns
+    the registration contacts for the requested SPID. Credentialed —
+    KYC-vetted, NPAC-rights accounts only.
+- Regenerated `tniq-api.json` from the live OpenAPI spec (190 → 248 endpoints).
+
+### Changed
+- Canonicalized API paths `/api/v1/*` → `/v1/*` to match the TNIQ backend (#5).
+
 ## [1.1.1]
 
 ### Changed
