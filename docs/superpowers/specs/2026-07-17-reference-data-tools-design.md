@@ -126,13 +126,17 @@ client-side field-stripping is required or attempted:
 
 ## Acceptance criteria (from #6)
 
-- [ ] All nine operations reachable through clearly named `ref_*` tools.
-- [ ] Pagination, filters, identifiers, and the CIC resolve limit represented in
+All met. Shipped in `tniq-mcp@1.2.0` (2026-07-18); whole-branch review clean;
+live smoke check passed with a `reference-data:read`-scoped token.
+
+- [x] All nine operations reachable through clearly named `ref_*` tools.
+- [x] Pagination, filters, identifiers, and the CIC resolve limit represented in
       schemas.
-- [ ] Resp Org and SPID detail return their complete credentialed contact DTOs
+- [x] Resp Org and SPID detail return their complete credentialed contact DTOs
       without exposing admin operations or internal metadata.
-- [ ] SPID list/search does not return contact values.
-- [ ] Descriptions/output preserve the KYC/NPAC-rights and non-public-data
+- [x] SPID list/search does not return contact values.
+- [x] Descriptions/output preserve the KYC/NPAC-rights and non-public-data
       boundaries.
-- [ ] `npm run build` passes.
-- [ ] Manual smoke checks: scoped token succeeds; unscoped token rejected.
+- [x] `npm run build` passes.
+- [x] Manual smoke checks: scoped token succeeds; unscoped token rejected.
+      Verified 2026-07-18.
