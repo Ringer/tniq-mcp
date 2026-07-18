@@ -35,6 +35,7 @@ TNIQ by Ringer is a telecom platform providing APIs for:
 - **ROC** — Responsible Organization Change workflows for toll-free numbers
 - **Bulk Port Projects** — Bulk port order management with validation, submission, and lifecycle tracking
 - **Port-Out Releases** — NPAC release management for numbers leaving your network
+- **Reference Data** — Credentialed, read-only directory lookups: NANPA CICs, NetNumber GCMR NNIDs, Somos Resp Orgs, and NPAC SPID registrations
 
 ---
 
@@ -122,6 +123,24 @@ Use for managing Caller Name ID records.
 - **cnam_activate** — Set or update the displayed caller name (max 15 chars)
 - **cnam_delete** — Remove a CNAM record
 
+### Reference Data (ref_*)
+Credentialed, read-only reference directories. Requires a KYC-vetted token with
+the reference-data:read operation. This surface establishes NONE of: routing,
+entitlement, current toll-free ownership, or current TN SPID.
+
+- **ref_search_cics / ref_get_cic / ref_resolve_cics** — NANPA Feature Group D
+  Carrier Identification Codes; resolve accepts up to 100 CICs per call
+- **ref_search_nnids / ref_get_nnid** — Published NetNumber GCMR NNID directory
+  (the GLOBAL reference directory — distinct from the account-configured
+  messaging NNIDs managed by msg_* tools)
+- **ref_search_resp_orgs / ref_get_resp_org** — Published Somos Resp Org
+  identities; detail returns full order-processing contacts
+- **ref_search_spids / ref_get_spid** — Published NPAC SPID registration
+  identities; search returns a contact COUNT only, detail returns the
+  registration contacts for the requested SPID only. NPAC registration contacts
+  are distinct from the live SPID-on-number seen via Telique/LSMS and from
+  customer SPID entitlement.
+
 ---
 
 ## Key Concepts
@@ -141,7 +160,7 @@ Use for managing Caller Name ID records.
 | ROC | Responsible Organization Change — transferring TFN management to a new RespOrg |
 | TCR | The Campaign Registry — central registry for 10DLC messaging campaigns |
 | CNP | Connectivity Partner — messaging aggregator that provides network connectivity |
-| NNID | Network Node ID — identifier for messaging routing nodes |
+| NNID | Network Node ID. Two distinct meanings: (1) the global NetNumber GCMR reference directory queried by ref_* tools; (2) an account-configured messaging routing node managed by msg_* tools |
 | CNAM | Caller Name — the name displayed on caller ID |
 | IntraSP | Intra-Service Provider — moving a number within the same carrier to a new LRN |
 | CPR | Call Processing Record — routing rules for toll-free numbers |

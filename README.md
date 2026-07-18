@@ -61,6 +61,7 @@ If you prefer not to install globally, use npx:
 | Number Inventory | `inv_` | 32 | Number search, reserve, assign, disconnect, audit |
 | CNAM | `cnam_` | 3 | Caller Name ID management |
 | Reports | `report_` | 3 | Async report jobs |
+| Reference Data | `ref_` | 9 | CIC, NNID, Resp Org, SPID directory lookups (credentialed, read-only) |
 
 ## Environment Variables
 
